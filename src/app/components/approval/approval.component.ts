@@ -37,9 +37,11 @@ export class ApprovalComponent implements OnInit {
       this.approvalService.approvalInfo(this.token).subscribe((response) => {
         const { status, message, data } = response;
         if (status === ApiStatus.SUCCESS) {
-          this.gstIN = data.gstIN;
-          this.userEmail = data.userEmail;
-          if (message !== 'Already Approved') {
+          const { gstNumber, email } = data;
+
+          this.gstIN = gstNumber;
+          this.userEmail = email;
+          if (message === 'Already Approved') {
             this.approvalActionStatus = 'approved';
           } else if (message === 'Already Rejected') {
             this.approvalActionStatus = 'denied';

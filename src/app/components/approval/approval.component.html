@@ -15,7 +15,7 @@
     <mat-card-content class="content">
       <p>
         We got an request to create an account from your company's GSTIN
-        <span>33QWERT6789L4W7</span>
+        <span>{{gstIN}}</span>
       </p>
 
       <div class="userContent">
@@ -25,7 +25,7 @@
 
         <div class="d-flex align-items-center border rounded px-2">
           <mat-icon class="text-secondary">email</mat-icon>
-          <input disabled matInput class="form-control border-0 ms-2" value="Sushi" />
+          <input disabled matInput class="form-control border-0 ms-2" [value]="userEmail" />
         </div>
       </div>
 

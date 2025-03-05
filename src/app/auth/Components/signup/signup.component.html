@@ -14,22 +14,22 @@
       <ng-container *ngIf="emailForm.value.accountType === '2'">
         <div class="gst-det-container">
           <ui-input
-            label="GST Username"
-            placeholder="Gst Username"
+            label="GSTIN"
+            placeholder="GST Number"
             [required]="true"
-            formControlName="gstUsername"
-            [errorMessage]="getErrorMessage('gstUsername') || gstUsernameError"
+            formControlName="gstIN"
+            [errorMessage]="getErrorMessage('gstIN') || gstINError"
+            [inputProps]="{ maxLength: 15 }"
+            [customClass]="{ flex: '1', width: '15rem' }"
           ></ui-input>
 
           <div class="gstIN">
             <ui-input
-              label="GSTIN"
-              placeholder="GST Number"
+              label="GST Username"
+              placeholder="Gst Username"
               [required]="true"
-              formControlName="gstIN"
-              [errorMessage]="getErrorMessage('gstIN') || gstINError"
-              [inputProps]="{ maxLength: 15 }"
-              [customClass]="{ flex: '1', width: '15rem' }"
+              formControlName="gstUsername"
+              [errorMessage]="getErrorMessage('gstUsername') || gstUsernameError"
             ></ui-input>
 
             <div class="gstOtpSendBtn">

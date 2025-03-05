@@ -116,7 +116,7 @@ export class AuthService {
 
   startResendTimer(): Observable<number> {
     return new Observable<number>((observer) => {
-      this.resendTimer = 3;
+      this.resendTimer = 30;
       this.resendInterval = setInterval(() => {
         this.resendTimer--;
         observer.next(this.resendTimer);

@@ -1,0 +1,29 @@
+<div class="form-container">
+  <div class="formWrapper">
+    <div>
+      <p class="otp-det">OTP has been sent to</p>
+      <p class="email">osborne.********.com</p>
+    </div>
+
+    <p class="otp-label">
+      <span>OTP</span> <a routerLink="/auth/signin">Change Email Address</a>
+    </p>
+
+    <form>
+      <ui-otp
+        [length]="6"
+        [onlyNumeric]="true"
+        (otpEntered)="otpEntered($event)"
+        [errorMessage]="errorMessage">
+      </ui-otp>
+
+      <ui-button
+        type="button"
+        content="Proceed"
+        [customStyle]="{ 'width': '100%' }"
+        (click)="submitOtp()"
+      >
+      </ui-button>
+    </form>
+  </div>
+</div>

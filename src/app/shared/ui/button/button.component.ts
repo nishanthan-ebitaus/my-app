@@ -1,4 +1,4 @@
-import { NgClass, NgStyle } from '@angular/common';
+import { NgClass, NgIf, NgStyle } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 export enum ButtonVariant {
@@ -7,9 +7,11 @@ export enum ButtonVariant {
   Danger = 'danger',
   Success = 'success'
 }
+
 @Component({
   selector: 'ui-button',
-  imports: [NgClass, NgStyle],
+  standalone: true,
+  imports: [NgClass, NgStyle, NgIf],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss']
 })
@@ -19,6 +21,7 @@ export class ButtonComponent {
   @Input() variant: ButtonVariant = ButtonVariant.Primary;
   @Input() outlined: boolean = false;
   @Input() disabled: boolean = false;
+  @Input() loading: boolean = false;
   @Input() customStyle: { [key: string]: string } = {};
 
   variantClassMap = {

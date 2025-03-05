@@ -11,6 +11,7 @@ export const API_URL = {
     VERIFY_GST_OTP: '/auth/taxus/obtainGstToken',
   },
   APPROVAL: {
-    VERFICAITON: '/taxus/approval/verification',
+    VERFICAITON: '/taxus/approvals/verification',
+    ACTION: '/taxus/approvals/action',
   }
 };

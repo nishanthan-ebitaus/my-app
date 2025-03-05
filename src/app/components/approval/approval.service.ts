@@ -15,6 +15,6 @@ export class ApprovalService {
   }
 
   updateApprovalInfo(token: string, action: string) {
-    return this.http.post<any>(`${environment.API_BASE_URL}${API_URL.APPROVAL.VERFICAITON}?token=${token}?action=${action}`);
+    return this.http.post<any>(`${environment.API_BASE_URL}${API_URL.APPROVAL.ACTION}?token=${token}&action=${action}`);
   }
 }

@@ -30,6 +30,7 @@ export class SignupComponent implements OnInit {
   gstOtpError = '';
   showModal = false;
   showTermsModal = false;
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
@@ -83,6 +84,7 @@ export class SignupComponent implements OnInit {
   }
 
   gstDetails() {
+    this.isLoading = true;
     const emailId = this.emailForm.get('email')?.value;
     const gstIN = this.emailForm.get('gstIN')?.value;
     const gstUsername = this.emailForm.get('gstUsername')?.value;
@@ -116,6 +118,9 @@ export class SignupComponent implements OnInit {
             return;
           }
         }
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }

@@ -1,12 +1,14 @@
 <button
   [ngClass]="[
     variantClassMap[variant],
-    outlined ? 'outlined' : ''
+    outlined ? 'outlined' : '',
+    loading ? 'loading' : ''
   ]"
   [ngStyle]="customStyle"
-  [disabled]="disabled"
-  [attr.aria-disabled]="disabled ? 'true' : 'false'"
+  [disabled]="disabled || loading"
+  [attr.aria-disabled]="disabled || loading ? 'true' : 'false'"
   [type]="type"
 >
-  {{ content }}
+  <span *ngIf="loading" class="spinner"></span>
+  <span *ngIf="!loading">{{ content }}</span>
 </button>

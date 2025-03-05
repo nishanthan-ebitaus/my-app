@@ -18,6 +18,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   otpError = '';
   resendTimer$!: Observable<number>;
   signInFormStep!: SigninStep;
+  isLoading = false;
 
   private destroy$ = new Subject<void>();
 
@@ -68,6 +69,7 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   handleSignin() {
     // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
+    this.isLoading = true;
     this.signinService.signin({ username: this.userEmail }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
@@ -77,7 +79,6 @@ export class SigninComponent implements OnInit, OnDestroy {
         } else if (response.status === ApiStatus.FAIL) {
           if (message === 'User is not present') {
             this.emailError = message;
-            // this.router.navigate(['/auth/signup'], { replaceUrl: true })
             return;
           }
 
@@ -89,6 +90,9 @@ export class SigninComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('An error occurred. Please try again.', err);
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }
@@ -124,7 +128,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   verifyOtp() {
-    console.log('on otp', this.userEmail, this.userOtp);
+    this.isLoading = true;
     this.signinService.verifyOtp({ username: this.userEmail, otp: this.userOtp }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status } = response;
@@ -134,7 +138,10 @@ export class SigninComponent implements OnInit, OnDestroy {
         } else if (status === ApiStatus.FAIL) {
           this.otpError = 'Invalid OTP';
         }
-      }
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
     })
   }
 

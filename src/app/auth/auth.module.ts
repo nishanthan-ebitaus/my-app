@@ -13,11 +13,13 @@ import { ModalComponent } from '../shared/ui/modal/modal.component';
 import { SelectComponent } from '../shared/ui/select/select.component';
 import { VerifyOtpComponent } from './Components/verify-otp/verify-otp.component';
 import { AuthService } from './auth.service';
+import { IrpCredentialsComponent } from './Components/irp-credentials/irp-credentials.component';
 
 @NgModule({
   declarations: [
     SigninComponent,
     SignupComponent,
+    IrpCredentialsComponent,
   ],
   imports: [
     CommonModule,
