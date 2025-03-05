@@ -6,6 +6,7 @@ import { BehaviorSubject, debounceTime, fromEvent, merge, Observable, switchMap,
 import { GstDetailsMca, GstOtp, SigninRequest, SigninStep, Signup, SignupStep, VerifyGstOtp, VerifyOptRequest } from './auth.model';
 import { Router } from '@angular/router';
 import { environment } from '@environments/environment';
+import { HttpService } from '../core/services/http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class AuthService {
   private resendInterval: any;
   private resendTimer: number = 30;
 
-  constructor(private http: HttpClient, private zone: NgZone, private router: Router) { }
+  constructor(private http: HttpService, private zone: NgZone, private router: Router) { }
 
   trackUserActivity() {
     const activityEvents$ = merge(
@@ -65,7 +66,7 @@ export class AuthService {
   }
 
   private setAuthToken(token: string): void {
-    localStorage.setItem('AuthToken', token);
+    localStorage.setItem('authToken', token);
     this.authTokenSubject.next(token);
   }
 
@@ -74,7 +75,7 @@ export class AuthService {
   }
 
   private setRefreshToken(token: string): void {
-    localStorage.setItem('AuthToken', token);
+    localStorage.setItem('refreshToken', token);
     this.authTokenSubject.next(token);
   }
 
@@ -115,7 +116,7 @@ export class AuthService {
 
   startResendTimer(): Observable<number> {
     return new Observable<number>((observer) => {
-      this.resendTimer = 30;
+      this.resendTimer = 3;
       this.resendInterval = setInterval(() => {
         this.resendTimer--;
         observer.next(this.resendTimer);

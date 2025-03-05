@@ -12,7 +12,7 @@ import { AuthService } from '../../auth.service';
   styleUrl: './signin.component.scss'
 })
 export class SigninComponent implements OnInit, OnDestroy {
-  userEmail = 'bharathi.elayaperumal@ebitaus.com';
+  userEmail = 'cTest01@ebitaus.com';
   emailError = '';
   userOtp!: string;
   otpError = '';
@@ -21,7 +21,7 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private signinService: AuthService, private router: Router) {}
+  constructor(private signinService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.resendTimer$ = this.signinService.startResendTimer();
@@ -34,6 +34,16 @@ export class SigninComponent implements OnInit, OnDestroy {
           this.signinService.clearResendInterval();
         }
       });
+  }
+
+  maskEmail(email: string): string {
+    const parts = email.split("@");
+    if (parts.length !== 2) return email;
+
+    const username = parts[0].toLowerCase();
+    const domain = parts[1].split(".");
+
+    return `${username}*****.${domain[domain.length - 1]}`;
   }
 
   onOtpEntered(otp: string) {
@@ -66,7 +76,8 @@ export class SigninComponent implements OnInit, OnDestroy {
           this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
         } else if (response.status === ApiStatus.FAIL) {
           if (message === 'User is not present') {
-            this.router.navigate(['/auth/signup'], { replaceUrl: true })
+            this.emailError = message;
+            // this.router.navigate(['/auth/signup'], { replaceUrl: true })
             return;
           }
 
@@ -84,14 +95,36 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   resendLoginOtp() {
     this.resendTimer$.subscribe((timerValue) => {
+      console.log(timerValue)
       if (timerValue === 0) {
-        this.handleSignin();
+        this.signinService.signin({ username: this.userEmail }).subscribe({
+          next: (response: ApiResponse<any>) => {
+            const { status, message } = response;
+            if (status === ApiStatus.SUCCESS) {
+              console.log("succeess");
+              // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
+            } else if (response.status === ApiStatus.FAIL) {
+              if (message === 'User is not present') {
+                this.router.navigate(['/auth/signup'], { replaceUrl: true })
+                return;
+              }
+
+              if (message?.includes("You reached max attempt")) {
+                this.emailError = message;
+                return;
+              }
+            }
+          },
+          error: (err) => {
+            console.error('An error occurred. Please try again.', err);
+          }
+        });
       }
     });
   }
 
-
   verifyOtp() {
+    console.log('on otp', this.userEmail, this.userOtp);
     this.signinService.verifyOtp({ username: this.userEmail, otp: this.userOtp }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status } = response;

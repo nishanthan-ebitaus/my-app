@@ -20,7 +20,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() label: string = '';
   @Input() placeholder: string = 'Enter value';
   @Input() type: string = 'text';
-  @Input() customClass: string = '';
+  @Input() customClass: { [key: string]: string } = {};
   @Input() errorMessage: string = '';
   @Input() disabled: boolean = false;
   @Input() required: boolean = false;
@@ -31,6 +31,13 @@ export class InputComponent implements ControlValueAccessor {
   @Input() inputProps: { [key: string]: any } = {}
 
   value: string | boolean = '';
+
+  getClassFromStyles(styles: { [key: string]: string }): string {
+    return Object.entries(styles)
+      .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:${value}`)
+      .join(';');
+  }
+
 
   get processedLabel() {
     return this.label ? this.label.toLowerCase().replace(/ /g, '-') : '';

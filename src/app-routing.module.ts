@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AuthGuard } from './app/auth/auth.guard';
 import { ApprovalComponent } from './app/components/approval/approval.component';
 
 const routes: any = [
@@ -9,7 +10,8 @@ const routes: any = [
   },
   {
     path: '',
-    loadChildren: () => import('./app/dashboard/dashboard.module').then(m => m.DashboardModule)
+    loadChildren: () => import('./app/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'approval',

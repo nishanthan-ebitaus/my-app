@@ -18,6 +18,7 @@
       [ngClass]="{ 'input-error-field': isInvalid, 'input-invalid': isInvalid }"
       v-bind="inputProps"
       class="input-field"
+      [style]="getClassFromStyles(customClass)"
     />
 
     <p *ngIf="isInvalid || errorMessage !== ''" class="input-error" id="input-error">

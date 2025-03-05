@@ -29,6 +29,7 @@
               formControlName="gstIN"
               [errorMessage]="getErrorMessage('gstIN') || gstINError"
               [inputProps]="{ maxLength: 15 }"
+              [customClass]="{ flex: '1', width: '15rem' }"
             ></ui-input>
 
             <div class="gstOtpSendBtn">
@@ -115,13 +116,3 @@
     <app-terms-info></app-terms-info>
   </div>
 </ui-modal>
-<!--
-<ui-modal *ngIf="showModal" [showClose]="false">
-  <div class="registered-modal" modal-content>
-    <p>This GSTIN has been already registered!. So kindly Login</p>
-    <ui-button
-      content="OK"
-      [customStyle]="{ 'width': 'max-content' }"
-    ></ui-button>
-  </div>
-</ui-modal> -->

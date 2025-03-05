@@ -5,6 +5,7 @@ import { AuthService } from '@src/app/auth/auth.service';
 import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-signup',
@@ -34,7 +35,8 @@ export class SignupComponent implements OnInit {
     private authService: AuthService,
     private formBuilder: FormBuilder,
     private router: Router,
-  ) {}
+    private toastr: ToastrService,
+  ) { }
 
   ngOnInit() {
     this.resendTimer$.subscribe((time) => {
@@ -61,14 +63,14 @@ export class SignupComponent implements OnInit {
     // update validation based on default accountType value
     this.updateConditionalValidators(this.emailForm.get('accountType')?.value);
 
-    // hit gstDetails when gstIN reaches 15 characters
-    this.emailForm.get('gstIN')?.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe((gstIN) => {
-        if (gstIN?.length === 15) {
-          this.gstDetails();
-        }
-      });
+    // // hit gstDetails when gstIN reaches 15 characters
+    // this.emailForm.get('gstIN')?.valueChanges
+    //   .pipe(debounceTime(300), distinctUntilChanged())
+    //   .subscribe((gstIN) => {
+    //     if (gstIN?.length === 15) {
+    //       this.gstDetails();
+    //     }
+    //   });
 
     // verify gstOtp when user filled the gstOtp
     this.emailForm.get('gstOtp')?.valueChanges
@@ -85,9 +87,12 @@ export class SignupComponent implements OnInit {
     const gstIN = this.emailForm.get('gstIN')?.value;
     const gstUsername = this.emailForm.get('gstUsername')?.value;
 
-    console.log('gstUsername', gstUsername)
     if (!gstUsername) {
       this.gstUsernameError = 'GST Username is required';
+    }
+
+    if (!gstIN) {
+      this.gstINError = 'GSTIN is required';
       return;
     }
 
@@ -96,23 +101,25 @@ export class SignupComponent implements OnInit {
       next: (response: ApiResponse<any>) => {
         const { status, message, data } = response;
         if (status === ApiStatus.SUCCESS) {
-          if (message === 'This GstIN is already registered') {
-            // this.showModal = true;
-            this.gstINError = 'This GstIN is already registered';
-            return;
-          } else {
-            this.gstINError = '';
-          }
-
+          this.gstINError = '';
           const { companyName } = data;
           this.emailForm.get('companyName')?.setValue(companyName);
           this.requestGstOtp();
           this.isGstDetailsFetched = true;
-
+        } else {
+          if (message === 'This GstIN is already registered') {
+            // this.showModal = true;
+            this.gstINError = 'This GSTIN is already registered';
+            this.toastr.info('everything is broken', 'Major Error', {
+              timeOut: 3000,
+            })
+            return;
+          }
         }
       }
     });
   }
+
 
   requestGstOtp() {
     this.resendTimer$ = this.authService.startResendTimer();
@@ -131,8 +138,18 @@ export class SignupComponent implements OnInit {
 
   handleResendGstOtp() {
     this.resendTimer$.pipe(first()).subscribe((time) => {
-      if (time === 0) {
-        this.requestGstOtp();
+      if (time <= 0) {
+        this.authService.requestGstOtp({ gstUsername: this.emailForm.get('gstUsername')?.value })
+          .subscribe({
+            next: (reponse: ApiResponse<any>) => {
+              const { status } = reponse;
+              if (status === ApiStatus.SUCCESS) {
+                // this.verifyGstOtp();
+              } else {
+                console.log('toast');
+              }
+            }
+          })
       }
     })
   }
@@ -226,24 +243,9 @@ export class SignupComponent implements OnInit {
     this.showTermsModal = !this.showTermsModal;
   }
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Handles the verification of the user OTP during signup.
- *
- * @param otp - The OTP entered by the user.
- *
- * This function retrieves the email from the form and
- * calls the `verifyOtp` method of the auth service,
- * passing the email and OTP for verification. If the
- * OTP verification is successful, it navigates to the
- * home page. Otherwise, it sets an error message for
- * an invalid OTP.
- */
-
-/******  3b071f5b-097c-4be4-b1d8-a9bd6bedf7d3  *******/
   handleSignupUserOtp(otp: string) {
     console.log(this.emailForm.get('email')?.value, '******************')
-    this.authService.verifyOtp({ username: this.emailForm.get('email')?.value  , otp }).subscribe({
+    this.authService.verifyOtp({ username: this.emailForm.get('email')?.value, otp }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status } = response;
         if (status === ApiStatus.SUCCESS) {
