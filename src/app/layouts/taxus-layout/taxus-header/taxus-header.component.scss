@@ -1,0 +1,18 @@
+@use '@src/styles.scss' as global;
+
+header {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid global.$border-color;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  .pageTitle {
+    font-size: 1.2rem;
+  }
+
+  .pageContent {
+    flex-grow: 1;
+  }
+}

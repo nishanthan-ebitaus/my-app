@@ -1,0 +1,12 @@
+<button
+  [ngClass]="[
+    variantClassMap[variant],
+    outlined ? 'outlined' : ''
+  ]"
+  [ngStyle]="customStyle"
+  [disabled]="disabled"
+  [attr.aria-disabled]="disabled ? 'true' : 'false'"
+  [type]="type"
+>
+  {{ content }}
+</button>

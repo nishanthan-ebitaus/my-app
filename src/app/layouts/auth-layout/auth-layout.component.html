@@ -1,0 +1,22 @@
+<section>
+  <div class="left">
+    <img src="/assets/images/auth.png" alt="">
+  </div>
+
+  <div class="right">
+    <div class="header">
+      <img src="/assets/images/Logo (1).png" alt="Ebitaus">
+
+      <ui-button
+        *ngIf="currentRoute === 'signup'"
+        content="Login Instead?"
+        [outlined]="true"
+        [routerLink]="['/signin']"
+      ></ui-button>
+    </div>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</section>

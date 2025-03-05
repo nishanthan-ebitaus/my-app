@@ -1,0 +1,47 @@
+<div class="input-container" [ngClass]="customClass">
+  <ng-container *ngIf="type !== 'checkbox'; else checkboxTemplate">
+    <label *ngIf="label" class="input-label" [attr.aria-label]="label">
+      {{ label }}<span *ngIf="required" class="required-asterisk">*</span>
+    </label>
+
+    <input
+      id="input-{{ processedLabel }}"
+      [type]="type"
+      [placeholder]="placeholder"
+      [value]="value"
+      [required]="required"
+      [readOnly]="readOnly"
+      [disabled]="disabled"
+      [attr.aria-invalid]="isInvalid ? 'true' : 'false'"
+      [attr.aria-describedby]="isInvalid ? 'input-error' : ''"
+      (input)="handleInput($event)"
+      [ngClass]="{ 'input-error-field': isInvalid, 'input-invalid': isInvalid }"
+      v-bind="inputProps"
+      class="input-field"
+    />
+
+    <p *ngIf="isInvalid || errorMessage !== ''" class="input-error" id="input-error">
+      {{ errorMessage }}
+    </p>
+
+    <p *ngIf="note" class="input-note">{{ note }}</p>
+  </ng-container>
+
+  <!-- Checkbox Template -->
+  <ng-template #checkboxTemplate>
+    <div class="checkbox-container">
+      <input
+        id="input-{{ processedLabel }}"
+        type="checkbox"
+        [checked]="value"
+        [disabled]="disabled"
+        (change)="handleInput($event)"
+        class="checkbox-input"
+        [ngClass]="{ 'checkbox-invalid': isInvalid || errorMessage !== '' }"
+      />
+      <label *ngIf="label" class="checkbox-label" [attr.for]="'input-' + processedLabel">
+        {{ label }}
+      </label>
+    </div>
+  </ng-template>
+</div>

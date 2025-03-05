@@ -1,0 +1,41 @@
+<div class="ui-select-container" [ngClass]="customClass">
+  <label *ngIf="label" class="label" [attr.for]="'ui-select-box'" [attr.aria-label]="label">
+    {{ label }}<span *ngIf="required" class="required-asterisk">*</span>
+  </label>
+
+  <div
+    role="combobox"
+    id="ui-select-box"
+    class="ui-select-box"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-haspopup]="true"
+    [attr.aria-controls]="'ui-dropdown'"
+    tabindex="0"
+    (click)="toggleDropdown()"
+    (keydown)="handleKeydown($event)">
+    <span class="selected-item">{{ selectedItem ? selectedItem.name : placeholder }}</span>
+    <span class="arrow">&#9662;</span>
+  </div>
+
+  <ul
+    *ngIf="isOpen()"
+    id="ui-dropdown"
+    class="ui-dropdown"
+    role="listbox"
+    [attr.aria-labelledby]="'ui-select-box'"
+  >
+    <li
+      *ngFor="let option of options; let i = index; trackBy: trackById"
+      role="option"
+      [attr.aria-selected]="selectedItem?.value === option.value"
+      class="ui-option"
+      [class.highlighted]="i === highlightedIndex"
+      (click)="selectItem(option)"
+      (keydown)="handleKeydown($event)"
+      tabindex="0">
+      {{ option.name }}
+    </li>
+  </ul>
+
+  <p *ngIf="errorMessage" class="error" id="error">{{ errorMessage }}</p>
+</div>

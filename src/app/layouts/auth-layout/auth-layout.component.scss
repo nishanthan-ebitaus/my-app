@@ -1,0 +1,62 @@
+@use '@src/styles.scss' as global;
+
+section {
+  display: flex;
+
+  .left {
+    width: 50%;
+    border: 1px solid ;
+
+    img {
+      width: 100%;
+    }
+
+  }
+
+  .right {
+    width: 50%;
+    border: 1px solid ;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 1px 3px;
+
+      img {
+        width: 20%;
+      }
+    }
+
+    .content {
+      flex-grow: 1;
+      // height: 100%;
+      // margin-bottom: 9rem;
+    }
+
+    .form-container {
+      width: 50%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+      flex-grow: 1;
+
+      p {
+        color: black;
+        font-size: 1.1rem;
+        font-family: "Inter-Medium";
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  }
+}

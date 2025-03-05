@@ -1,0 +1,52 @@
+@use "@src/styles.scss" as global;
+
+.form-container {
+  width: 50%;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+
+  .formWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: global.$authWrapper;
+    border-radius: 1rem;
+    padding: 2.5rem;
+
+    .otp-det {
+      margin: 0;
+    }
+
+    .email {
+      color: black;
+      font-family: "Inter-Medium";
+    }
+
+    .otp-label {
+      font-size: 0.7rem;
+
+      span {
+        margin-right: 0.5rem;
+      }
+    }
+
+    a {
+      color: global.$primary-active;
+      font-weight: 600;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .resend-otp {
+        font-size: 12px;
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<div *ngIf="signInFormStep === 'email'" class="form-container">
+  <div class="formWrapper">
+    <p class="heading">Login to your <span>TaxUS</span> Account</p>
+
+    <form (ngSubmit)="submitEmail()">
+      <ui-input
+        type="email"
+        name="userEmail"
+        label="E-Mail Address"
+        placeholder="name@company.com"
+        [required]="true"
+        [(ngModel)]="userEmail"
+        [errorMessage]="emailError"
+        [isInvalid]="emailError !== ''"
+      ></ui-input>
+
+      <ui-button
+        type="submit"
+        content="Proceed"
+        [customStyle]="{ width: '100%' }"
+      ></ui-button>
+    </form>
+
+    <div class="createAccount">
+      <p><span>Don't have an account?</span></p>
+
+      <ui-button
+        type="submit"
+        content="Create an Account"
+        [customStyle]="{ width: '100%' }"
+        [outlined]="true"
+        routerLink="/auth/signup"
+      ></ui-button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="signInFormStep === 'otp'" class="form-container">
+  <div class="formWrapper">
+    <div>
+      <p class="otp-det">OTP has been sent to</p>
+      <p class="email">osborne.********.com</p>
+    </div>
+
+    <div>
+      <p class="otp-label">
+        <span>OTP</span> <a (click)="changeEmailAddress()">Change Email Address</a>
+      </p>
+
+      <form (ngSubmit)="submitOtp()">
+        <ui-otp
+          [length]="6"
+          [onlyNumeric]="true"
+          (otpEntered)="onOtpEntered($event)"
+          [errorMessage]="otpError"
+        >
+        </ui-otp>
+
+        <p class="resend-otp">
+          Didn’t Receive OTP? <a>Resend OTP</a>
+          <span *ngIf="resendTimer$ | async as timer"> in {{ timer }} Seconds</span>
+        </p>
+
+        <ui-button
+          type="submit"
+          content="Proceed"
+          [customStyle]="{ width: '100%' }"
+        ></ui-button>
+      </form>
+    </div>
+  </div>
+</div>

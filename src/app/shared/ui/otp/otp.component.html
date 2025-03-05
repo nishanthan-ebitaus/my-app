@@ -1,0 +1,27 @@
+<div class="otp-container">
+  <label *ngIf="label" class="input-label" [attr.aria-label]="label">
+    {{ label }}<span *ngIf="required" class="required-asterisk">*</span>
+  </label>
+
+  <div class="input-container">
+    <input
+      *ngFor="let control of otpValues; let i = index"
+      #otpInput
+      type="text"
+      [maxlength]="1"
+      [disabled]="disabled"
+      class="otp-input"
+      [ngClass]="{ 'input-error': isInvalid || errorMessage !== '' }"
+      [formControl]="control"
+      (input)="onInputChange(i, $event)"
+      (keydown)="handleBackspace(i, $event)"
+      (focus)="otpInputs.toArray()[i].nativeElement.select()"
+      v-bind="inputProps"
+    />
+  </div>
+
+
+  <p *ngIf="isInvalid || errorMessage !== ''" class="error" id="error">
+    {{ errorMessage }}
+  </p>
+</div>

@@ -1,0 +1,78 @@
+@use "@src/styles.scss" as global;
+
+.form-container {
+  width: 70%;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+
+  .formWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: global.$authWrapper;
+    border-radius: 1rem;
+    padding: 2.5rem;
+
+    .heading {
+      color: global.$headerColor;
+      font-size: 1.1rem;
+      font-family: "Inter-Medium";
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .gst-det-container {
+        display: flex;
+        align-items: start;
+        gap: 1rem;
+
+        .gstIN {
+          display: flex;
+          position: relative;
+
+          .gstOtpSendBtn {
+            position: absolute;
+            right: .5rem;
+            bottom: .5rem;
+          }
+        }
+      }
+
+      .isDisabled {
+        opacity: 0.5;
+      }
+
+      .termsInfo {
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .resend-otp {
+        font-size: 12px;
+        margin-top: 0.5rem;
+        color: global.$secondary-text;
+      }
+    }
+
+    .siginLink {
+      text-align: center;
+    }
+  }
+}
+
+.registered-modal {
+  text-align: center;
+
+  p {
+    margin-bottom: 2rem;
+  }
+}

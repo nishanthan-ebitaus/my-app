@@ -1,0 +1,127 @@
+<div *ngIf="!isSignupSuccess" class="form-container">
+  <div class="formWrapper">
+    <p class="heading">Create An Account</p>
+
+    <form [formGroup]="emailForm" (ngSubmit)="onSubmit()">
+      <ui-select
+        [options]="options"
+        label="Registering As"
+        [required]="true"
+        formControlName="accountType"
+        [errorMessage]="getErrorMessage('accountType')"
+      ></ui-select>
+
+      <ng-container *ngIf="emailForm.value.accountType === '2'">
+        <div class="gst-det-container">
+          <ui-input
+            label="GST Username"
+            placeholder="Gst Username"
+            [required]="true"
+            formControlName="gstUsername"
+            [errorMessage]="getErrorMessage('gstUsername') || gstUsernameError"
+          ></ui-input>
+
+          <div class="gstIN">
+            <ui-input
+              label="GSTIN"
+              placeholder="GST Number"
+              [required]="true"
+              formControlName="gstIN"
+              [errorMessage]="getErrorMessage('gstIN') || gstINError"
+              [inputProps]="{ maxLength: 15 }"
+            ></ui-input>
+
+            <div class="gstOtpSendBtn">
+              <ui-button
+                type="button"
+                [outlined]="true"
+                content="Send OTP"
+                [customStyle]="{ width: '100%', height: 'max-content', padding: '0.2rem 0.5rem', border: 'none' }"
+                (click)="gstDetails()"
+              ></ui-button>
+            </div>
+
+          </div>
+        </div>
+
+        <div [ngClass]="{ isDisabled: !isGstDetailsFetched }">
+          <ui-otp
+            label="GST Otp"
+            (otpEntered)="onOtpEntered($event)"
+            [errorMessage]="getErrorMessage('gstOtp') || gstOtpError"
+            [disabled]="!isGstDetailsFetched"
+          >
+          </ui-otp>
+
+          <p *ngIf="!isGstOtpVerified" class="resend-otp">
+            Didn’t Receive OTP?
+            <a (click)="handleResendGstOtp()">Resend OTP</a>
+            <span *ngIf="resendTimer$ | async as timer">
+              in {{ timer }} Seconds</span
+            >
+          </p>
+        </div>
+
+        <ui-input
+          label="Company Name"
+          placeholder="Company Name"
+          [required]="true"
+          formControlName="companyName"
+          [errorMessage]="getErrorMessage('companyName')"
+          [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
+          [readOnly]="emailForm.value.accountType === '2'"
+        ></ui-input>
+      </ng-container>
+
+      <ui-input
+        label="Corporate E-Mail"
+        placeholder="name@company.com"
+        [required]="true"
+        formControlName="email"
+        [errorMessage]="getErrorMessage('email')"
+        [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
+      ></ui-input>
+
+      <span class="termsInfo">
+        <ui-input
+          type="checkbox"
+          formControlName="isAgree"
+          [errorMessage]="getErrorMessage('isAgree')"
+        ></ui-input>
+        I agree to the
+        <a (click)="updateTermsModal()">Terms & Conditions</a> and
+        <a (click)="updateTermsModal()">Privacy Policy</a>
+      </span>
+
+      <ui-button
+        content="Proceed"
+        [customStyle]="{ width: '100%' }"
+        type="submit"
+      ></ui-button>
+    </form>
+
+    <p class="siginLink">Already have an Account? <a routerLink="/auth/signin">Login</a></p>
+  </div>
+</div>
+
+<auth-verify-otp
+  *ngIf="isSignupSuccess"
+  (enteredOtp)="handleSignupUserOtp($event)"
+  [errorMessage]="userOtpError"
+></auth-verify-otp>
+
+<ui-modal *ngIf="showTermsModal" (close)="updateTermsModal()">
+  <div modal-content>
+    <app-terms-info></app-terms-info>
+  </div>
+</ui-modal>
+<!--
+<ui-modal *ngIf="showModal" [showClose]="false">
+  <div class="registered-modal" modal-content>
+    <p>This GSTIN has been already registered!. So kindly Login</p>
+    <ui-button
+      content="OK"
+      [customStyle]="{ 'width': 'max-content' }"
+    ></ui-button>
+  </div>
+</ui-modal> -->

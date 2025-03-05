@@ -1,0 +1,100 @@
+@use '@src/styles.scss' as global;
+
+.form-container {
+  width: 50%;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .formWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: global.$authWrapper;
+    border-radius: 1rem;
+    padding: 2.5rem;
+
+    .heading {
+      font-size: 1.05rem;
+      color: global.$headerColor;
+
+      span {
+        font-family: "Inter-Medium";
+        font-size: 1.2rem;
+      }
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-bottom: 1rem;
+
+      .resend-otp {
+        font-size: 12px;
+      }
+    }
+
+    .createAccount {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+
+      p {
+        text-align: center;
+        display: inline-block;
+        position: relative;
+
+        span {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1000;
+          background-color: global.$secondaryTextDim;
+          padding: 0 .5rem;
+          text-wrap: nowrap;
+          font-size: 12px;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 1.5px;
+          background-color: global.$secondaryText;
+          opacity: 0.3;
+          z-index: 100;
+        }
+      }
+
+    }
+  }
+
+  .gst-det {
+    padding: 0 3rem 0 0;
+    font-size: 1.3rem;
+  }
+
+  .otp-det {
+    margin: 0;
+  }
+
+  .email {
+    color: black;
+    font-family: "Inter-Medium";
+  }
+
+  .otp-label {
+    font-size: .7rem;
+
+    span {
+      margin-right: .5rem;
+    }
+  }
+
+}

@@ -1,0 +1,39 @@
+@use '@src/styles.scss' as global;
+
+section {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+
+  .left {
+    width: 50%;
+    border: 1px solid ;
+
+    img {
+      width: 100%;
+    }
+
+  }
+
+  .right {
+    width: 50%;
+    border: 1px solid ;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .taxus-logo {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+
+      img {
+        width: 5rem;
+      }
+    }
+
+    .content {
+      flex-grow: 1;
+    }
+  }
+}

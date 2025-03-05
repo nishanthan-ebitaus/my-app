@@ -1,0 +1,96 @@
+$primary-active: #2A4BD0;
+$primary-color: #ccc;
+
+$primary-light: #2a4bd014;
+
+$primary-text: #5F697E;
+$secondary-text: #838998;
+$secondary-text-dim: #A7ABB3;
+$font-color: #333;
+$error-color: red;
+
+$border-color: #ccc;
+$border-radius: .5rem;
+
+$input-bg-color: #fff;
+$input-padding: .7rem 1rem;
+$disabled-bg-color: #f5f5f5;
+$input-text: #424A5A;
+
+$secondary-grey: #F5F7F9;
+$secondary-blue: #2a4bd014;
+$grey-1: #EFEFEF;
+
+$primary-yellow: #CD9D00;
+$secondary-yellow: #FFFF001A;
+
+
+$headerColor: #1D2430;
+$primaryText: #424A5A;
+$secondaryText: #838998;
+$secondaryTextDim: #FBFBFC;
+$primayBlue: #02327E;
+$authWrapper: #02327E0A;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: $primary-text;
+}
+
+a {
+  color: $primary-yellow;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("assets/fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter-Light";
+  src: url("assets/fonts/Inter-Light.woff2") format("woff2");
+  font-weight: light;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter-Medium";
+  src: url("assets/fonts/Inter-Medium.woff2") format("woff2");
+  font-weight: medium;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter-SemiBold";
+  src: url("assets/fonts/Inter-SemiBold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter-Bold";
+  src: url("assets/fonts/Inter-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+
+// /* Importing Bootstrap SCSS file. */
+// @import 'bootstrap/scss/bootstrap';
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

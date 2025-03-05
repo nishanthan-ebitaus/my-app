@@ -1,0 +1,49 @@
+@use '@src/styles.scss' as global;
+
+
+button {
+  // width: 9rem;
+  padding: 0.7rem 1.2rem;
+  font-size: 12px;
+  font-family: "Inter";
+  color: white;
+  border: none;
+  border-radius: global.$border-radius;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    background-color: #2440b0;
+  }
+}
+
+.btn-primary {
+  background-color: global.$primary-active;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+}
+
+.btn-success {
+  background-color: #28a745;
+}
+
+.outlined {
+  border: 1px solid global.$primary-active;
+  background-color: global.$primary-light;
+  color: global.$primayBlue;
+
+  &:hover {
+    background-color: global.$primary-light;
+  }
+}

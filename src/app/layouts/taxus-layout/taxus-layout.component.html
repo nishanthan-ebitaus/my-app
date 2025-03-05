@@ -1,0 +1,68 @@
+<div class="layout-container">
+  <aside class="sidebar">
+    <img src="/assets/images/Logo (1).png" alt="Logo" class="logo">
+
+    <nav>
+      <p class="listTitle">MAIN MENU</p>
+      <ul>
+        <li *ngFor="let item of mainMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
+          <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
+          <span class="menuItem">
+            <img [src]="item.icon" alt="icon">
+            <p>{{ item.name }}</p>
+          </span>
+        </li>
+      </ul>
+
+      <p class="listTitle">OTHER</p>
+      <ul>
+        <li *ngFor="let item of otherMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
+          <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
+          <span class="menuItem">
+            <img [src]="item.icon" alt="icon">
+            <p>{{ item.name }}</p>
+          </span>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main>
+    <taxus-header [activeLink]="activeLink$ | async" [pageTitle]="pageTitle"></taxus-header>
+
+    <section>
+      <router-outlet></router-outlet>
+
+      <ui-modal class="access-modal" *ngIf="accessStatus === 'pending'" [showClose]="false" >
+        <div modal-content >
+          <div class="status-wrapper">
+            <img [src]="accessPending" alt="" class="status-img">
+          </div>
+
+          <div class="status-content">
+            <p class="heading">Account Pending Approval</p>
+
+            <p class="desc">
+              Thank you for signing up to Create a TAXUS Account, Your Account Activation is pending approval from your Corporate Admin {{ statusInfo.adminEmail }}
+            </p>
+
+            <div class="details">
+              <div class="user">
+                <lucide-icon [name]="userIcon"></lucide-icon>
+                <p>{{ statusInfo.username }}</p>
+              </div>
+
+              <div class="status">
+                <lucide-icon [name]="getStatusIcon()"></lucide-icon>
+                <p>{{ statusInfo.status.charAt(0).toUpperCase() + statusInfo.status.slice(1) }}</p>
+              </div>
+            </div>
+
+            <p>You will be notified in your email once approved...</p>
+          </div>
+
+        </div>
+      </ui-modal>
+    </section>
+  </main>
+</div>

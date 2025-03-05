@@ -1,0 +1,82 @@
+@use '@src/styles.scss' as global;
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.input-label {
+  font-size: 12px;
+  color: global.$secondary-text;
+}
+
+.required-asterisk {
+  color: global.$error-color;
+}
+
+.input::placeholder {
+  color: global.$secondary-text-dim;
+}
+
+.input-field {
+  padding: global.$input-padding;
+  font-size: 14px;
+  color: global.$input-text;
+  border: none;
+  border-radius: global.$border-radius;
+  outline: none;
+  background-color: global.$input-bg-color;
+  transition: border 0.2s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 2px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+
+  &:focus, &:active {
+    border-color: global.$primary-active;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 0px, global.$primayBlue 0px 0px 0px 1px;
+  }
+
+  &:disabled {
+    background-color: global.$disabled-bg-color;
+    cursor: not-allowed;
+  }
+}
+
+.input-error {
+  color: global.$error-color;
+  font-size: 12px;
+
+  &:focus {
+    border-color: global.$error-color;
+  }
+}
+
+.input-invalid {
+  border: 1.5px solid global.$error-color;
+  box-shadow: none;
+
+  &:focus {
+    border-color: global.$error-color;
+  }
+}
+
+.input-note {
+  color: global.$secondary-text;
+  font-size: 14px;
+  margin-top: .5rem;
+}
+
+
+.checkbox-container {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  input[type="checkbox"]:checked {
+    accent-color: global.$primary-active;
+  }
+
+  .checkbox-invalid {
+    border: 1px solid red;
+  }
+}
