@@ -19,23 +19,22 @@
       </p>
 
       <div class="userContent">
-        <label class="form-label fw-semibold"
-          >Email Address associated with Account Creation</label
-        >
-        <input
-          disabled
-          matInput
-          class="form-control"
-          placeholder="Ex. Pizza"
-          value="Sushi"
-        />
+        <label class="form-label fw-semibold">
+          Email Address associated with Account Creation
+        </label>
+
+        <div class="d-flex align-items-center border rounded px-2">
+          <mat-icon class="text-secondary">email</mat-icon>
+          <input disabled matInput class="form-control border-0 ms-2" value="Sushi" />
+        </div>
       </div>
+
 
       <!-- <p>{{gstin}} {{customerName}}</p> -->
 
-      <div class="actions">
+      <div *ngIf="approvalActionStatus === null" class="actions">
         <button
-          (click)="updateApprovalInfo('DENY')"
+          (click)="updateApprovalInfo('deny')"
           mat-flat-button
           class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded"
         >
@@ -43,19 +42,23 @@
         </button>
 
         <button
-          (click)="updateApprovalInfo('APPROVE')"
+          (click)="updateApprovalInfo('approve')"
           mat-flat-button
           class="btn btn-primary text-white d-flex align-items-center px-4 rounded"
         >
           <mat-icon>send</mat-icon> Approve
         </button>
       </div>
+
+      <div *ngIf="approvalActionStatus !== null">
+        <p>Thank you! The user has been <span class="fw-semibold">{{ approvalActionStatus }}</span> successfully</p>
+      </div>
     </mat-card-content>
 
     <mat-card-footer class="mt-4">
       <p class="text-center">
         If you want to learn more about TaxUS, Please visit our
-        <span>Website</span>
+        <a href="http://192.168.29.243:4202/" target="_blank" rel="noopener noreferrer">Website</a>
       </p>
     </mat-card-footer>
   </mat-card>
