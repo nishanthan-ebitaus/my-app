@@ -109,7 +109,7 @@ export class SigninComponent implements OnInit, OnDestroy {
               // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
             } else if (response.status === ApiStatus.FAIL) {
               if (message === 'User is not present') {
-                this.router.navigate(['/auth/signup'], { replaceUrl: true })
+                this.emailError = message;
                 return;
               }
 

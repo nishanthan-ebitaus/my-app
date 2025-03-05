@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ApprovalService } from './approval.service';
+import { ActivatedRoute } from '@angular/router';
 import { ApiStatus } from '@src/app/core/models/api-response.model';
+import { ApprovalService } from './approval.service';
 
 @Component({
   selector: 'app-access-status',

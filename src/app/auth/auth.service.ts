@@ -7,6 +7,7 @@ import { GstDetailsMca, GstOtp, SigninRequest, SigninStep, Signup, SignupStep, V
 import { Router } from '@angular/router';
 import { environment } from '@environments/environment';
 import { HttpService } from '../core/services/http.service';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -114,9 +115,26 @@ export class AuthService {
     this.clearResendInterval();
   }
 
+  restrictedEmailDomainsValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const restrictedDomains = ['gmail.com', 'yahoo.com'];
+      const emailParts = control.value.split('@');
+
+      if (emailParts.length === 2 && restrictedDomains.includes(emailParts[1].toLowerCase())) {
+        return { restrictedDomain: true };
+      }
+
+      return null;
+    };
+  }
+
   startResendTimer(): Observable<number> {
     return new Observable<number>((observer) => {
-      this.resendTimer = 30;
+      this.resendTimer = 3;
       this.resendInterval = setInterval(() => {
         this.resendTimer--;
         observer.next(this.resendTimer);

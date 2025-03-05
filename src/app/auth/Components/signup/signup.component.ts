@@ -6,6 +6,7 @@ import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model'
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr'
+import { SignupStep } from '../../auth.model';
 
 @Component({
   selector: 'app-signup',
@@ -25,12 +26,17 @@ export class SignupComponent implements OnInit {
   resendTimer$: Observable<number> = new Observable<number>();
   isGstDetailsFetched = false;
   isGstOtpVerified = false;
-  isSignupSuccess = false;
+  isSignupSuccess = 'email';
+  userOtp = '';
   userOtpError = '';
   gstOtpError = '';
   showModal = false;
   showTermsModal = false;
   isLoading = false;
+  otpError = '';
+  irpForm!: FormGroup;
+  irpFormSubmitted = false;
+  emailError = '';
 
   constructor(
     private authService: AuthService,
@@ -46,9 +52,14 @@ export class SignupComponent implements OnInit {
       }
     });
 
+    this.irpForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+    });
+
     this.emailForm = this.formBuilder.group({
       accountType: ['1', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email, this.authService.restrictedEmailDomainsValidator()]],
       gstUsername: [''],
       gstIN: [''],
       gstOtp: [''],
@@ -81,6 +92,100 @@ export class SignupComponent implements OnInit {
           this.verifyGstOtp();
         }
       });
+  }
+
+  submitIrpForm(isProceeding = false) {
+    // if (!isProceeding) {
+      this.router.navigate(['/'], { replaceUrl: true });
+    // }
+
+    this.isLoading = true;
+    this.irpFormSubmitted = true;
+
+    if (this.irpForm.invalid) {
+      this.isLoading = false;
+      return;
+    }
+
+  }
+
+  maskEmail(email: string): string {
+    const parts = email.split("@");
+    if (parts.length !== 2) return email;
+
+    const username = parts[0].toLowerCase();
+    const domain = parts[1].split(".");
+
+    return `${username}*****.${domain[domain.length - 1]}`;
+  }
+
+  onOtpEntered(otp: string) {
+    console.log(otp);
+    this.userOtp = otp;
+  }
+
+  changeEmailAddress() {
+    this.authService.setSignupStep(SignupStep.EMAIL_VERIFICATION);
+    this.emailForm.get('email')?.setValue('');
+  }
+
+  submitOtp() {
+    if (!this.userOtp || this.userOtp.length !== 6) {
+      this.otpError = 'Invalid OTP';
+      return;
+    }
+
+    this.otpError = '';
+    this.verifyOtp();
+  }
+
+  verifyOtp() {
+    this.isLoading = true;
+    this.authService.verifyOtp({ username: this.emailForm.value.email, otp: this.userOtp }).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status } = response;
+        if (status === ApiStatus.SUCCESS) {
+          console.log("OTP verified");
+          this.isSignupSuccess = 'irp';
+        } else if (status === ApiStatus.FAIL) {
+          this.otpError = 'Invalid OTP';
+        }
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    })
+  }
+
+  resendLoginOtp() {
+    console.log('reached resendloginotp')
+    this.resendTimer$.subscribe((timerValue) => {
+      console.log(timerValue)
+      if (timerValue === 0) {
+        this.authService.signin({ username: this.emailForm.value.email }).subscribe({
+          next: (response: ApiResponse<any>) => {
+            const { status, message } = response;
+            if (status === ApiStatus.SUCCESS) {
+              console.log("succeess");
+              // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
+            } else if (response.status === ApiStatus.FAIL) {
+              if (message === 'User is not present') {
+                this.router.navigate(['/auth/signup'], { replaceUrl: true })
+                return;
+              }
+
+              if (message?.includes("You reached max attempt")) {
+                this.otpError = message;
+                return;
+              }
+            }
+          },
+          error: (err) => {
+            console.error('An error occurred. Please try again.', err);
+          }
+        });
+      }
+    });
   }
 
   gstDetails() {
@@ -124,7 +229,6 @@ export class SignupComponent implements OnInit {
       }
     });
   }
-
 
   requestGstOtp() {
     this.resendTimer$ = this.authService.startResendTimer();
@@ -176,7 +280,7 @@ export class SignupComponent implements OnInit {
       });
   }
 
-  onOtpEntered(otp: string) {
+  onGstOtpEntered(otp: string) {
     console.log(otp);
     this.emailForm.get('gstOtp')?.setValue(otp);
   }
@@ -208,6 +312,9 @@ export class SignupComponent implements OnInit {
       if (control.hasError('email')) {
         return 'Invalid email';
       }
+      if (control.hasError('restrictedDomain')) {
+        return 'Invalid email';
+      }
       if (control.hasError('pattern')) {
         return 'OTP must be a 6-digit number';
       }
@@ -229,17 +336,25 @@ export class SignupComponent implements OnInit {
   }
 
   signup() {
+    this.isLoading = true;
     const gstIN = this.emailForm.get('gstIN')?.value;
     const email = this.emailForm.get('email')?.value;
     const isAgree = this.emailForm.get('isAgree')?.value;
     const payload = { gstIN, email, isAgree };
     this.authService.signup(payload).subscribe({
       next: (response: ApiResponse<any>) => {
-        const { status } = response;
+        const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
           // this.authService.setSignupStep(SignupStep.COMPANY_DETAILS);
-          this.isSignupSuccess = true;
+          this.isSignupSuccess = 'otp';
+        } else {
+          if (message === 'User already exists') {
+            this.emailError = message;
+          }
         }
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }

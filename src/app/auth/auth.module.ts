@@ -14,6 +14,7 @@ import { SelectComponent } from '../shared/ui/select/select.component';
 import { VerifyOtpComponent } from './Components/verify-otp/verify-otp.component';
 import { AuthService } from './auth.service';
 import { IrpCredentialsComponent } from './Components/irp-credentials/irp-credentials.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { IrpCredentialsComponent } from './Components/irp-credentials/irp-creden
     SelectComponent,
     VerifyOtpComponent,
     ReactiveFormsModule,
+    MatIconModule,
   ],
   providers: [AuthService],
 })

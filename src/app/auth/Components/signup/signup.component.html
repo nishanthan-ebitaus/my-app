@@ -1,4 +1,4 @@
-<div *ngIf="!isSignupSuccess" class="form-container">
+<div *ngIf="isSignupSuccess === 'email'" class="form-container" [ngClass]="{ 'ca-form': emailForm.value.accountType === '2' }">
   <div class="formWrapper">
     <p class="heading">Create An Account</p>
 
@@ -20,7 +20,6 @@
             formControlName="gstIN"
             [errorMessage]="getErrorMessage('gstIN') || gstINError"
             [inputProps]="{ maxLength: 15 }"
-            [customClass]="{ flex: '1', width: '15rem' }"
           ></ui-input>
 
           <div class="gstIN">
@@ -30,6 +29,7 @@
               [required]="true"
               formControlName="gstUsername"
               [errorMessage]="getErrorMessage('gstUsername') || gstUsernameError"
+              [customClass]="{ flex: '1', width: '17rem' }"
             ></ui-input>
 
             <div class="gstOtpSendBtn">
@@ -39,6 +39,7 @@
                 content="Send OTP"
                 [customStyle]="{ width: '100%', height: 'max-content', padding: '0.2rem 0.5rem', border: 'none' }"
                 (click)="gstDetails()"
+                [disabled]="isLoading || (emailForm.value.gstUsername === '' || emailForm.value.gstIN === '')"
               ></ui-button>
             </div>
 
@@ -48,7 +49,7 @@
         <div [ngClass]="{ isDisabled: !isGstDetailsFetched }">
           <ui-otp
             label="GST Otp"
-            (otpEntered)="onOtpEntered($event)"
+            (otpEntered)="onGstOtpEntered($event)"
             [errorMessage]="getErrorMessage('gstOtp') || gstOtpError"
             [disabled]="!isGstDetailsFetched"
           >
@@ -79,7 +80,7 @@
         placeholder="name@company.com"
         [required]="true"
         formControlName="email"
-        [errorMessage]="getErrorMessage('email')"
+        [errorMessage]="getErrorMessage('email') || emailError"
         [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
       ></ui-input>
 
@@ -98,6 +99,7 @@
         content="Proceed"
         [customStyle]="{ width: '100%' }"
         type="submit"
+        [loading]="isLoading"
       ></ui-button>
     </form>
 
@@ -105,11 +107,108 @@
   </div>
 </div>
 
-<auth-verify-otp
+<!-- <auth-verify-otp
   *ngIf="isSignupSuccess"
   (enteredOtp)="handleSignupUserOtp($event)"
   [errorMessage]="userOtpError"
-></auth-verify-otp>
+></auth-verify-otp> -->
+
+<div *ngIf="isSignupSuccess === 'otp'" class="form-container">
+  <div class="formWrapper">
+    <div>
+      <p class="otp-det">OTP has been sent to</p>
+      <p class="email">{{ maskEmail(emailForm.value.email) }}</p>
+    </div>
+
+    <div>
+      <p class="otp-label">
+        <span>OTP</span> <a (click)="changeEmailAddress()">Change Email Address</a>
+      </p>
+
+      <form (ngSubmit)="submitOtp()">
+        <ui-otp
+          [length]="6"
+          [onlyNumeric]="true"
+          (otpEntered)="onOtpEntered($event)"
+          [errorMessage]="otpError"
+        >
+        </ui-otp>
+
+        <p class="resend-otp">
+          Didn’t Receive OTP? <a (click)="resendLoginOtp()">Resend OTP</a>
+          <span *ngIf="resendTimer$ | async as timer"> in {{ timer }} Seconds</span>
+        </p>
+
+        <ui-button
+          type="submit"
+          content="Proceed"
+          [customStyle]="{ width: '100%' }"
+          [loading]="isLoading"
+        ></ui-button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isSignupSuccess === 'irp'" class="form-container irp-container">
+  <div class="formWrapper">
+    <p class="heading">Enter your IRP Credentials (Optional)</p>
+
+    <p>
+      If you want to Generate E-Invoice, Kindly input existing Invoice
+      Registration Portal (IRP) credentials, or Register your company details in
+      the IRP Portal to generate credentials.
+    </p>
+
+    <form [formGroup]="irpForm" (ngSubmit)="submitIrpForm(true)">
+      <div class="flex-row">
+        <label class="form-label fw-semibold mb-1">Username</label>
+        <input
+          matInput
+          class="form-control border-0 p-2"
+          placeholder="Enter your Username"
+          formControlName="username"
+        />
+        <p *ngIf="irpForm.get('username')?.invalid && (irpForm.get('username')?.touched || irpFormSubmitted)" class="text-danger">
+          Username is required
+        </p>
+      </div>
+
+      <div>
+        <label class="form-label fw-semibold mb-1">Password</label>
+        <input
+          matInput
+          class="form-control border-0 p-2"
+          placeholder="Enter your Password"
+          type="password"
+          formControlName="password"
+        />
+        <p *ngIf="irpForm.get('password')?.invalid && (irpForm.get('password')?.touched || irpFormSubmitted)" class="text-danger">
+          Password is required
+        </p>
+      </div>
+
+      <div class="d-flex justify-content-between mt-3">
+        <ui-button
+          type="button"
+          content="I'll do it later"
+          [outlined]="true"
+          (click)="submitIrpForm(false)"
+        ></ui-button>
+
+        <ui-button
+          type="submit"
+          content="Proceed"
+          [loading]="isLoading"
+        ></ui-button>
+      </div>
+
+      <p class="text-center">You can add IRP Credentials later in Settings</p>
+    </form>
+
+
+  </div>
+</div>
 
 <ui-modal *ngIf="showTermsModal" (close)="updateTermsModal()">
   <div modal-content>

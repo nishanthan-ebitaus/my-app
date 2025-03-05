@@ -1,6 +1,7 @@
 @use '@src/styles.scss' as global;
 
 button {
+  width: 9rem;
   padding: 0.7rem 1.2rem;
   font-size: 12px;
   font-family: "Inter";
@@ -9,10 +10,10 @@ button {
   border-radius: global.$border-radius;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // gap: 8px;
   position: relative;
 
   &:disabled {
