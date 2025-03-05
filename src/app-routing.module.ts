@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ApprovalComponent } from './app/components/approval/approval.component';
 
 const routes: any = [
   {
@@ -9,6 +10,10 @@ const routes: any = [
   {
     path: '',
     loadChildren: () => import('./app/dashboard/dashboard.module').then(m => m.DashboardModule)
+  },
+  {
+    path: 'approval',
+    component: ApprovalComponent
   },
   {
     path: '**',

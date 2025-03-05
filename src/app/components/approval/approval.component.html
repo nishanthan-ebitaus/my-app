@@ -1,0 +1,38 @@
+<section class="d-flex flex-column align-items-center justify-content-center vh-100">
+  <img class="bgImage w-100" src="/assets/images/approvalBg.webp" alt="">
+
+  <mat-card class="card border-primary shadow-lg p-4">
+    <mat-card-header class="header">
+      <img class="img-fluid" src="/assets/images/Taxus By Ebitaus.webp" alt="">
+    </mat-card-header>
+
+    <mat-card-content class="content">
+      <p>
+        Someone has entered your Company’s GSTIN
+        <span>33QWERT6789L4W7</span>
+        to Create a TaxUS Account
+      </p>
+
+      <div class="userContent">
+        <label class="form-label fw-semibold">Email Address associated with Account Creation</label>
+        <input disabled matInput class="form-control" placeholder="Ex. Pizza" value="Sushi">
+      </div>
+
+      <p>{{gstin}} {{customerName}}</p>
+
+      <div class="actions">
+        <button mat-flat-button class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded">
+          <mat-icon>close</mat-icon> Deny
+        </button>
+
+        <button mat-flat-button class="btn btn-primary text-white d-flex align-items-center px-4 rounded">
+          <mat-icon>send</mat-icon> Approve
+        </button>
+      </div>
+    </mat-card-content>
+
+    <mat-card-footer class="mt-4">
+      <p class="text-center">If you want to learn more about TaxUS, Please visit our <span>Website</span></p>
+    </mat-card-footer>
+  </mat-card>
+</section>

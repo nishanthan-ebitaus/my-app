@@ -57,39 +57,52 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   handleSignin() {
-    this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
-    // this.signinService.signin({ username: this.userEmail }).subscribe({
-    //   next: (response: ApiResponse<any>) => {
-    //     const { status, message } = response;
-    //     if (status === ApiStatus.SUCCESS) {
-    //       console.log("succeess");
-    //       this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
-    //     } else if (response.status === ApiStatus.FAIL) {
-    //       if (message === 'User is not present') {
-    //         this.router.navigate(['/auth/signup'], { replaceUrl: true })
-    //       }
-    //     }
-    //   },
-    //   error: (err) => {
-    //     console.error('An error occurred. Please try again.', err);
-    //   }
-    // });
+    // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
+    this.signinService.signin({ username: this.userEmail }).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status, message } = response;
+        if (status === ApiStatus.SUCCESS) {
+          console.log("succeess");
+          this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
+        } else if (response.status === ApiStatus.FAIL) {
+          if (message === 'User is not present') {
+            this.router.navigate(['/auth/signup'], { replaceUrl: true })
+            return;
+          }
+
+          if (message?.includes("You reached max attempt")) {
+            this.emailError = message;
+            return;
+          }
+        }
+      },
+      error: (err) => {
+        console.error('An error occurred. Please try again.', err);
+      }
+    });
   }
 
+  resendLoginOtp() {
+    this.resendTimer$.subscribe((timerValue) => {
+      if (timerValue === 0) {
+        this.handleSignin();
+      }
+    });
+  }
+
+
   verifyOtp() {
-    console.log('reced verig')
-    this.router.navigate([''], { replaceUrl: true })
-    // this.signinService.verifyOtp({ username: this.userEmail, otp: this.userOtp }).subscribe({
-    //   next: (response: ApiResponse<any>) => {
-    //     const { status } = response;
-    //     if (status === ApiStatus.SUCCESS) {
-    //       console.log("OTP verified");
-    //       this.router.navigate(['/'], { replaceUrl: true })
-    //     } else if (status === ApiStatus.FAIL) {
-    //       this.otpError = 'Invalid OTP';
-    //     }
-    //   }
-    // })
+    this.signinService.verifyOtp({ username: this.userEmail, otp: this.userOtp }).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status } = response;
+        if (status === ApiStatus.SUCCESS) {
+          console.log("OTP verified");
+          this.router.navigate(['/'], { replaceUrl: true })
+        } else if (status === ApiStatus.FAIL) {
+          this.otpError = 'Invalid OTP';
+        }
+      }
+    })
   }
 
   submitOtp() {

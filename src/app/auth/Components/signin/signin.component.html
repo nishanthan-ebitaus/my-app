@@ -57,7 +57,7 @@
         </ui-otp>
 
         <p class="resend-otp">
-          Didn’t Receive OTP? <a>Resend OTP</a>
+          Didn’t Receive OTP? <a (click)="resendLoginOtp()">Resend OTP</a>
           <span *ngIf="resendTimer$ | async as timer"> in {{ timer }} Seconds</span>
         </p>
 
