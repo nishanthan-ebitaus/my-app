@@ -14,7 +14,7 @@ const routes: any = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'approval',
+    path: 'approval/verification',
     component: ApprovalComponent
   },
   {

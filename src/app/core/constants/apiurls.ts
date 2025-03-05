@@ -9,5 +9,8 @@ export const API_URL = {
     GST_DETAILS_MCA: '/auth/taxus/fetchCompanyDetailsFromMCA',
     REQUEST_GST_OTP: '/auth/taxus/requestGstOtp',
     VERIFY_GST_OTP: '/auth/taxus/obtainGstToken',
+  },
+  APPROVAL: {
+    VERFICAITON: '/taxus/approval/verification',
   }
 };

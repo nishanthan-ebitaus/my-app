@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ApprovalService } from './approval.service';
 
 @Component({
   selector: 'app-access-status',
@@ -8,15 +9,34 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./approval.component.scss']
 })
 export class ApprovalComponent implements OnInit {
-  gstin: string = '';
-  customerName: string = '';
+  token: string | null = null;
+  currentUrl: string = '';
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(
+    private route: ActivatedRoute,
+    private approvalService: ApprovalService
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.gstin = params['gstin'] || 'N/A';
-      this.customerName = params['customerName'] || 'Unknown';
+      this.token = params['token'] || null;
+      console.log('Extracted Token:', this.token);
     });
+
+    this.currentUrl = window.location.href;
+
+    this.approvalInfo();
+  }
+
+  approvalInfo() {
+    if (this.token) {
+      this.approvalService.approvalInfo(this.token).subscribe();
+    }
+  }
+
+  updateApprovalInfo(action: string) {
+    if (this.token) {
+      this.approvalService.updateApprovalInfo(this.token, action.toUpperCase()).subscribe();
+    }
   }
 }
