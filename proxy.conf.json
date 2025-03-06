@@ -1,0 +1,12 @@
+{
+  "/taxus": {
+    "target": "http://192.168.29.102:8001",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/auth": {
+    "target": "http://192.168.29.102:8001",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

@@ -4,6 +4,7 @@ export const API_URL = {
     SIGNUP: '/auth/taxus/createTaxusUserAndEntity',
     VERIFY_OTP: '/auth/login',
     RESEND_OTP: '/auth/resend-otp',
+    ENTITY_MAP: '/auth/taxus/getEntityMap',
   },
   GST: {
     GST_DETAILS_MCA: '/auth/taxus/fetchCompanyDetailsFromMCA',
@@ -13,5 +14,10 @@ export const API_URL = {
   APPROVAL: {
     VERFICAITON: '/taxus/approvals/verification',
     ACTION: '/taxus/approvals/action',
+  },
+  USER: {
+    USER_INFO: '/taxus/user/getRoleAndAccessInfo',
+    ENTITY_MAP: '/auth/taxus/getEntityMap',
+    CACHE_SUB_ENTITY: '/taxus/user/cacheRoleAccessForSubEntity',
   }
 };

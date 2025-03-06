@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr'
 import { SignupStep } from '../../auth.model';
+import { Check } from 'lucide-angular';
 
 @Component({
   selector: 'app-signup',
@@ -37,6 +38,7 @@ export class SignupComponent implements OnInit {
   irpForm!: FormGroup;
   irpFormSubmitted = false;
   emailError = '';
+  tickIcon = Check;
 
   constructor(
     private authService: AuthService,
@@ -58,7 +60,7 @@ export class SignupComponent implements OnInit {
     });
 
     this.emailForm = this.formBuilder.group({
-      accountType: ['1', Validators.required],
+      accountType: ['2', Validators.required],
       email: ['', [Validators.required, Validators.email, this.authService.restrictedEmailDomainsValidator()]],
       gstUsername: [''],
       gstIN: [''],
@@ -96,7 +98,9 @@ export class SignupComponent implements OnInit {
 
   submitIrpForm(isProceeding = false) {
     // if (!isProceeding) {
-      this.router.navigate(['/'], { replaceUrl: true });
+      // this.router.navigate(['/'], { replaceUrl: true });
+      // localStorage.setItem('authToken', 'test');
+      window.location.href = '/';
     // }
 
     this.isLoading = true;

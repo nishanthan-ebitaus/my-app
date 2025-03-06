@@ -12,7 +12,7 @@ import { AuthService } from '../../auth.service';
   styleUrl: './signin.component.scss'
 })
 export class SigninComponent implements OnInit, OnDestroy {
-  userEmail = 'cTest01@ebitaus.com';
+  userEmail = '';
   emailError = '';
   userOtp!: string;
   otpError = '';
@@ -35,6 +35,10 @@ export class SigninComponent implements OnInit, OnDestroy {
           this.signinService.clearResendInterval();
         }
       });
+  }
+
+  isRestricedDomain() {
+    return !this.signinService.validateEmail(this.userEmail) &&  this.signinService.isRestrictedEmailDomain(this.userEmail);
   }
 
   maskEmail(email: string): string {
@@ -68,6 +72,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   handleSignin() {
+    // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
     // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
     this.isLoading = true;
     this.signinService.signin({ username: this.userEmail }).subscribe({
@@ -128,6 +133,9 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   verifyOtp() {
+    // this.router.navigateByUrl('/', { replaceUrl: true })
+    // localStorage.setItem('authToken', 'test');
+    // window.location.href = '/';
     this.isLoading = true;
     this.signinService.verifyOtp({ username: this.userEmail, otp: this.userOtp }).subscribe({
       next: (response: ApiResponse<any>) => {

@@ -29,6 +29,7 @@ export class HttpService {
       (config) => {
         const modifiedConfig = config as InternalAxiosRequestConfig;
         const token = localStorage.getItem('authToken');
+        console.log('from axiso')
         if (token) {
           modifiedConfig.headers = modifiedConfig.headers || {};
           modifiedConfig.headers.Authorization = `Bearer ${token}`;

@@ -132,9 +132,20 @@ export class AuthService {
     };
   }
 
+  isRestrictedEmailDomain(email: string) {
+    const restrictedDomains = ['gmail.com', 'yahoo.com'];
+    const emailParts = email.split('@');
+
+    if (emailParts.length === 2 && restrictedDomains.includes(emailParts[1].toLowerCase())) {
+      return true;
+    }
+
+    return false;
+  }
+
   startResendTimer(): Observable<number> {
     return new Observable<number>((observer) => {
-      this.resendTimer = 3;
+      this.resendTimer = 30;
       this.resendInterval = setInterval(() => {
         this.resendTimer--;
         observer.next(this.resendTimer);

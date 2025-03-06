@@ -31,11 +31,12 @@
     .close-button {
       position: absolute;
       top: 1rem;
-      right: 3rem;
+      right: 2rem;
       cursor: pointer;
       border-radius: global.$border-radius;
       padding: .3rem;
       background-color: global.$grey-1;
+      z-index: 100;
 
       img {
         width: 1.2rem;

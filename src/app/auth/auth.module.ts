@@ -15,6 +15,7 @@ import { VerifyOtpComponent } from './Components/verify-otp/verify-otp.component
 import { AuthService } from './auth.service';
 import { IrpCredentialsComponent } from './Components/irp-credentials/irp-credentials.component';
 import { MatIconModule } from '@angular/material/icon';
+import { LucideAngularModule } from 'lucide-angular';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { MatIconModule } from '@angular/material/icon';
     VerifyOtpComponent,
     ReactiveFormsModule,
     MatIconModule,
+    LucideAngularModule
   ],
   providers: [AuthService],
 })

@@ -6,7 +6,8 @@ import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ModalComponent } from "../../shared/ui/modal/modal.component";
 import { TaxusHeaderComponent } from "./taxus-header/taxus-header.component";
-import { ApiStatus } from '@src/app/core/models/api-response.model';
+import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model';
+import { TaxusLayoutService } from './taxus-layout.service';
 
 @Component({
   selector: 'layout-taxus',
@@ -57,6 +58,17 @@ export class TaxusLayoutComponent implements OnInit {
     '/help': 'Help & Support',
   };
 
+  allMenu = [
+    { name: 'Business Dashboard', routerLink: '/', icon: this.dashboardIcon },
+    { name: 'Partner Information', routerLink: '/partner', icon: this.partnerIcon },
+    { name: 'Inventory', routerLink: '/inventory', icon: this.inventoryIcon },
+    { name: 'Sales Transactions', routerLink: '/sales', icon: this.salesIcon },
+    { name: 'e-Way Bill', routerLink: '/e-way', icon: this.eWayBillIcon },
+    { name: 'Purchase Transactions', routerLink: '/purchase', icon: this.purchaseIcon },
+    { name: 'GST Solutions', routerLink: '/gst', icon: this.gstIcon },
+    { name: 'ERP Integration', routerLink: '/erp', icon: this.erpIcon },
+  ];
+
   mainMenu = [
     { name: 'Business Dashboard', routerLink: '/', icon: this.dashboardIcon },
     { name: 'Partner Information', routerLink: '/partner', icon: this.partnerIcon },
@@ -74,10 +86,11 @@ export class TaxusLayoutComponent implements OnInit {
     { name: 'Help & Support', routerLink: '/help', icon: this.helpIcon },
   ];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef, private taxusService: TaxusLayoutService) {}
 
   ngOnInit() {
     this.getUserInfo();
+    this.getEntityMap();
     this.activeLinkSubject.next(this.router.url);  // Set initial activeLink
     this.updatePageTitle(this.router.url);
 
@@ -98,25 +111,35 @@ export class TaxusLayoutComponent implements OnInit {
     return this.activeLinkSubject.getValue() === routerLink;
   }
 
+  getEntityMap() {
+    this.taxusService.entityMap();
+  }
+
   getUserInfo() {
-    const response = {
-      status: 'success',
-      message: 'User info fetched successfully.',
-      data: {
-        role: null,
-        canAccessPoints: null,
-      }
-    };
+    // const response = {
+    //   status: 'success',
+    //   message: 'User info fetched successfully.',
+    //   data: {
+    //     role: null,
+    //     canAccessPoints: null,
+    //   }
+    // };
 
-    const { status, data } = response;
+    console.log(this.taxusService.userInfo())
 
-    if (status === ApiStatus.SUCCESS) {
-      const { role } = data;
+    // this.taxusService.userInfo().subscribe({
+    //   next: (response: ApiResponse<any>) => {
+    //     const { status, data } = response;
 
-      if (role === null) {
-        this.getStatusInfo();
-      }
-    }
+    //     if (status === ApiStatus.SUCCESS) {
+    //       const { role } = data;
+
+    //       if (role === null) {
+    //         this.getStatusInfo();
+    //       }
+    //     }
+    //   }
+    // })
   }
 
   getStatusInfo() {
@@ -124,9 +147,9 @@ export class TaxusLayoutComponent implements OnInit {
       status: 'success',
       message: 'Status info fetched successfully.',
       data: {
-        // status: 'pending',
+        status: 'pending',
         // status: 'rejected',
-        status: 'deactivated',
+        // status: 'deactivated',
         adminEmail: 'admin@*****.com',
         username: 'User Name',
       }
