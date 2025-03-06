@@ -27,10 +27,7 @@
             "outputPath": "dist/my-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -84,10 +81,7 @@
               "buildTarget": "my-app:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-          "proxyConfig": "./proxy.conf.json"
-        }
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

@@ -1,0 +1,14 @@
+<div class="dashboard">
+  <select name="entity" id="entity" (change)="entitySelection($event)">
+    <option value="">Select Entity</option>
+    <option value="1">Entity 1</option>
+    <option value="2">Entity 2</option>
+    <option value="3">Entity 3</option>
+    <option value="4">Entity 4</option>
+  </select>
+
+  <div class="actions">
+    <button (click)="entityCreation()">➕ Add New Entity</button>
+    <button (click)="refreshData()">🔄 Reset to Default</button>
+  </div>
+</div>

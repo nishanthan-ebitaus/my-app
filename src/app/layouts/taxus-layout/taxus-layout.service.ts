@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpService } from '@core/services/http.service';
 import { API_URL } from '@src/app/core/constants/apiurls';
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class TaxusLayoutService {
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpClient) { }
 
   userInfo(): any {
     // return this.http.get<ApiResponse<any>>(API_URL.USER.USER_INFO);
@@ -60,7 +61,7 @@ export class TaxusLayoutService {
   // }
 
   entityMap(): any {
-    // return this.http.get<ApiResponse<any>>(API_URL.AUTH.ENTITY_MAP);
+     console.log('from client', this.http.get<ApiResponse<any>>(API_URL.AUTH.ENTITY_MAP))
     console.log('on emap')
     fetch('/auth/taxus/getEntityMap', {
       method: 'GET',

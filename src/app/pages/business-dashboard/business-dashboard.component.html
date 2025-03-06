@@ -1,0 +1,8 @@
+<div [ngSwitch]="entityCreation">
+  <app-new-entity *ngSwitchCase="'new'"></app-new-entity>
+  <app-bulk-entity *ngSwitchCase="'old'"></app-bulk-entity>
+
+  <div *ngSwitchDefault>
+    Business Dashboard
+  </div>
+</div>

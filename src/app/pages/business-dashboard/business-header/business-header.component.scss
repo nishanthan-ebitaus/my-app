@@ -1,0 +1,9 @@
+.dashboard {
+  display: flex;
+  justify-content: space-between;
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+  }
+}
