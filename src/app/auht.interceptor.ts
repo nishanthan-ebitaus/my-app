@@ -1,18 +1,22 @@
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';  // Import environment
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const authToken = 'YOUR_TOKEN_HERE';
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJpc1ZhbGlkIjp0cnVlLCJ1c2VySWQiOiI2N2M2MTlmYTk3Nzg5NzZjMTVhZDZjNWYiLCJpYXQiOjE3NDExNTA0NzcsImV4cCI6MTc0MTc1MDQ3N30.6q-SlEarGCuW9CLwAyznpDg-OXqK5hlHeiv0huzALBF_LdD9oZw1svBd5rRghtLUmyZ-uPFjqzXXlMqQbpiqcw`
-      }
-    });
-    console.log('req cloned', cloned.headers)
-    console.log('📢 Final Headers:', cloned.headers.keys());
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('Through auth interceptor' ,req.url);
 
-    return next.handle(cloned);
+    const clonedRequest = req.clone({
+      url: `${environment.API_BASE_URL}${req.url}`, // Add base URL here
+      setHeaders: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      },
+    });
+
+    return next.handle(clonedRequest);
   }
 }

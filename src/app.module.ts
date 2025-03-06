@@ -34,7 +34,7 @@ import { HttpService } from './app/core/services/http.service';
     HttpClientModule,
   ],
   providers: [provideHttpClient(),
-    // { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     // { provide: HTTP_INTERCEPTORS, useClass: HttpService, multi: true },
   ],
   bootstrap: [AppComponent]

@@ -1,68 +1,82 @@
 <div class="layout-container">
-  <aside class="sidebar">
-    <img src="/assets/images/Logo (1).png" alt="Logo" class="logo">
 
-    <nav>
-      <p class="listTitle">MAIN MENU</p>
-      <ul>
-        <li *ngFor="let item of mainMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
-          <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
-          <span class="menuItem">
-            <img [src]="item.icon" alt="icon">
-            <p>{{ item.name }}</p>
-          </span>
-        </li>
-      </ul>
+  <ng-container *ngIf="isLoading">
+    <mat-spinner diameter="40" class="loader" color="black"></mat-spinner>
+  </ng-container>
 
-      <p class="listTitle">OTHER</p>
-      <ul>
-        <li *ngFor="let item of otherMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
-          <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
-          <span class="menuItem">
-            <img [src]="item.icon" alt="icon">
-            <p>{{ item.name }}</p>
-          </span>
-        </li>
-      </ul>
-    </nav>
-  </aside>
+  <ng-container *ngIf="!isLoading">
+    <aside class="sidebar">
+      <img src="/assets/images/Logo (1).png" alt="Logo" class="logo">
 
-  <main>
-    <taxus-header [activeLink]="activeLink$ | async" [pageTitle]="pageTitle"></taxus-header>
+      <nav>
+        <p class="listTitle">MAIN MENU</p>
+        <ul>
+          <li *ngFor="let item of mainMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
+            <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
+            <span class="menuItem">
+              <img [src]="item.icon" alt="icon">
+              <p>{{ item.name }}</p>
+            </span>
+          </li>
+        </ul>
 
-    <section>
-      <router-outlet></router-outlet>
+        <p class="listTitle">OTHER</p>
+        <ul>
+          <li *ngFor="let item of otherMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
+            <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
+            <span class="menuItem">
+              <img [src]="item.icon" alt="icon">
+              <p>{{ item.name }}</p>
+            </span>
+          </li>
+        </ul>
+      </nav>
+    </aside>
 
-      <!-- <ui-modal class="access-modal" *ngIf="accessStatus === 'pending'" [showClose]="false" >
-        <div modal-content >
-          <div class="status-wrapper">
-            <img [src]="accessPending" alt="" class="status-img">
-          </div>
+    <main>
+      <taxus-header [activeLink]="activeLink$ | async" [pageTitle]="pageTitle"></taxus-header>
 
-          <div class="status-content">
-            <p class="heading">Account Pending Approval</p>
+      <section>
+        <router-outlet *ngIf="isLoading === false && statusInfo.status !== 'pending'" ></router-outlet>
 
-            <p class="desc">
-              Thank you for signing up to Create a TAXUS Account, Your Account Activation is pending approval from your Corporate Admin {{ statusInfo.adminEmail }}
-            </p>
-
-            <div class="details">
-              <div class="user">
-                <lucide-icon [name]="userIcon"></lucide-icon>
-                <p>{{ statusInfo.username }}</p>
-              </div>
-
-              <div class="status">
-                <lucide-icon [name]="getStatusIcon()"></lucide-icon>
-                <p>{{ statusInfo.status.charAt(0).toUpperCase() + statusInfo.status.slice(1) }}</p>
-              </div>
+        <ui-modal class="access-modal" *ngIf="accessStatus !== 'accepted'" [showClose]="false" >
+          <div modal-content >
+            <div class="status-wrapper">
+              <img [src]="accessPending" alt="" class="status-img">
             </div>
 
-            <p>You will be notified in your email once approved...</p>
-          </div>
+            <div class="status-content">
+              <p class="heading">Account Pending Approval</p>
 
-        </div>
-      </ui-modal> -->
-    </section>
-  </main>
+              <p class="desc">
+                Thank you for signing up to Create a TAXUS Account, Your Account Activation is pending approval from your Corporate Admin {{ statusInfo.adminMail }}
+              </p>
+
+              <div *ngIf="isLoading">
+                <!-- <map-spinner></map-spinner> -->
+              </div>
+
+              <div *ngIf="!isLoading" class="details">
+                <div class="user">
+                  <lucide-icon [name]="userIcon"></lucide-icon>
+                  <p>{{ statusInfo.userMail }}</p>
+                </div>
+
+                <div class="status" [ngClass]="accessStatus">
+                  <lucide-icon [name]="getStatusIcon()" [color]="accessStatus === 'denied' ? 'red' : '#CD9D00'"></lucide-icon>
+
+                  <p>{{ statusInfo.status.charAt(0).toUpperCase() + statusInfo.status.slice(1) }}</p>
+                </div>
+              </div>
+
+              <p *ngIf="accessStatus === 'pending'">You will be notified in your email once approved...</p>
+              <p *ngIf="accessStatus === 'denied'">Sorry your account opening request has been rejected. For more information contact your Corporate Admin</p>
+            </div>
+
+          </div>
+        </ui-modal>
+
+      </section>
+    </main>
+  </ng-container>
 </div>

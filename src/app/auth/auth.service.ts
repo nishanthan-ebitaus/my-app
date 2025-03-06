@@ -23,7 +23,7 @@ export class AuthService {
   private resendInterval: any;
   private resendTimer: number = 30;
 
-  constructor(private http: HttpService, private zone: NgZone, private router: Router) { }
+  constructor(private http: HttpClient, private zone: NgZone, private router: Router) { }
 
   trackUserActivity() {
     const activityEvents$ = merge(
@@ -188,7 +188,7 @@ export class AuthService {
 
   signin(data: SigninRequest): Observable<ApiResponse<any>> {
     this.trackUserActivity();
-    return this.http.post<any>(`${environment.API_BASE_URL}${API_URL.AUTH.SIGNIN}`, data);
+    return this.http.post<any>(API_URL.AUTH.SIGNIN, data);
   }
 
   verifyOtp(data: VerifyOptRequest): Observable<ApiResponse<any>> {

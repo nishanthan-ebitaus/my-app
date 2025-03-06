@@ -60,7 +60,7 @@ export class SignupComponent implements OnInit {
     });
 
     this.emailForm = this.formBuilder.group({
-      accountType: ['2', Validators.required],
+      accountType: ['1', Validators.required],
       email: ['', [Validators.required, Validators.email, this.authService.restrictedEmailDomainsValidator()]],
       gstUsername: [''],
       gstIN: [''],
@@ -98,18 +98,17 @@ export class SignupComponent implements OnInit {
 
   submitIrpForm(isProceeding = false) {
     // if (!isProceeding) {
-      // this.router.navigate(['/'], { replaceUrl: true });
-      // localStorage.setItem('authToken', 'test');
       window.location.href = '/';
+      return;
     // }
 
-    this.isLoading = true;
-    this.irpFormSubmitted = true;
+    // this.isLoading = true;
+    // this.irpFormSubmitted = true;
 
-    if (this.irpForm.invalid) {
-      this.isLoading = false;
-      return;
-    }
+    // if (this.irpForm.invalid) {
+    //   this.isLoading = false;
+    //   return;
+    // }
 
   }
 

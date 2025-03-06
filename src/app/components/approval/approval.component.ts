@@ -33,19 +33,27 @@ export class ApprovalComponent implements OnInit {
   }
 
   approvalInfo() {
+    console.log('on inside 1', this.token)
     if (this.token) {
-      this.approvalService.approvalInfo(this.token).subscribe((response) => {
-        const { status, message, data } = response;
-        if (status === ApiStatus.SUCCESS) {
-          const { gstNumber, email } = data;
+      this.approvalService.approvalInfo(this.token).subscribe({
+        next: (response) => {
+          console.log('on inside')
 
-          this.gstIN = gstNumber;
-          this.userEmail = email;
-          if (message === 'Already Approved') {
-            this.approvalActionStatus = 'approved';
-          } else if (message === 'Already Rejected') {
-            this.approvalActionStatus = 'denied';
+          const { status, message, data } = response;
+          if (status === ApiStatus.SUCCESS) {
+            const { gstNumber, email } = data;
+
+            this.gstIN = gstNumber;
+            this.userEmail = email;
+            if (message === 'Already Approved') {
+              this.approvalActionStatus = 'approved';
+            } else if (message === 'Already Rejected') {
+              this.approvalActionStatus = 'denied';
+            }
           }
+        },
+        error: (error) => {
+          console.error('An error occurred:', error);
         }
       });
     }

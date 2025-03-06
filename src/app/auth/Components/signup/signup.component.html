@@ -95,9 +95,11 @@
           formControlName="isAgree"
           [errorMessage]="getErrorMessage('isAgree')"
         ></ui-input>
-        I agree to the
-        <a (click)="updateTermsModal()">Terms & Conditions</a> and
-        <a (click)="updateTermsModal()">Privacy Policy</a>
+        <span>
+          I agree to the
+          <a (click)="updateTermsModal()">Terms & Conditions</a> and
+          <a (click)="updateTermsModal()">Privacy Policy</a>
+        </span>
       </span>
 
       <ui-button
@@ -105,7 +107,7 @@
         [customStyle]="{ width: '100%' }"
         type="submit"
         [loading]="isLoading"
-        [disabled]="emailForm.invalid || !isGstOtpVerified"
+        [disabled]="emailForm.value.accountType === '1' ? emailForm.invalid : emailForm.invalid || !isGstOtpVerified"
       ></ui-button>
     </form>
 

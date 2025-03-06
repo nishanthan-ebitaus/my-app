@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, SimpleChanges } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AlarmClock, Ban, Circle, Loader, LucideAngularModule, SquareUserRound, XCircle } from 'lucide-angular';
 import { BehaviorSubject } from 'rxjs';
@@ -8,11 +8,12 @@ import { ModalComponent } from "../../shared/ui/modal/modal.component";
 import { TaxusHeaderComponent } from "./taxus-header/taxus-header.component";
 import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model';
 import { TaxusLayoutService } from './taxus-layout.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'layout-taxus',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NgClass, NgFor, NgIf, AsyncPipe, TaxusHeaderComponent, ModalComponent, LucideAngularModule],
+  imports: [RouterOutlet, RouterLink, NgClass, NgFor, NgIf, AsyncPipe, TaxusHeaderComponent, ModalComponent, LucideAngularModule, MatProgressSpinnerModule],
   templateUrl: './taxus-layout.component.html',
   styleUrl: './taxus-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,9 +41,12 @@ export class TaxusLayoutComponent implements OnInit {
   userIcon = SquareUserRound
   statusInfo = {
     status: '',
-    adminEmail: '',
-    username: '',
+    adminMail: '',
+    userMail: '',
   }
+  currentEntity = '';
+  isLoading = true;
+  temp = true
 
   pageTitlesMap: Record<string, string> = {
     '/': 'Business Dashboard',
@@ -86,10 +90,9 @@ export class TaxusLayoutComponent implements OnInit {
     { name: 'Help & Support', routerLink: '/help', icon: this.helpIcon },
   ];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, private taxusService: TaxusLayoutService) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef, private taxusService: TaxusLayoutService) { }
 
   ngOnInit() {
-    this.getUserInfo();
     this.getEntityMap();
     this.activeLinkSubject.next(this.router.url);  // Set initial activeLink
     this.updatePageTitle(this.router.url);
@@ -103,6 +106,18 @@ export class TaxusLayoutComponent implements OnInit {
       });
   }
 
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['statusInfo']) {
+  //     this.statusInfo = changes['statusInfo'].currentValue;
+  //   }
+  //   if (changes["isLoading"]) {
+  //     this.isLoading = changes["isLoading"].currentValue;
+  //   }
+  //   if (changes["accessStatus"]) {
+  //     this.accessStatus = changes["accessStatus"].currentValue;
+  //   }
+  // }
+
   private updatePageTitle(url: string) {
     this.pageTitle = this.pageTitlesMap[url] || 'Dashboard';
   }
@@ -112,67 +127,69 @@ export class TaxusLayoutComponent implements OnInit {
   }
 
   getEntityMap() {
-    this.taxusService.entityMap();
+    this.taxusService.entityMap().subscribe({
+      next: (res: ApiResponse<any>) => {
+        const { status, data } = res;
+        if (status === ApiStatus.SUCCESS) {
+          const { entityDetailsMap } = data;
+          console.log('data on', entityDetailsMap);
+          if (Object.keys(entityDetailsMap).length > 0) {
+            this.currentEntity = Object.keys(entityDetailsMap)[0];
+            this.getCacheSubEntity();
+          } else {
+            this.accessStatus = 'accepted';
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          }
+        }
+      }
+    });
   }
 
   getUserInfo() {
-    // const response = {
-    //   status: 'success',
-    //   message: 'User info fetched successfully.',
-    //   data: {
-    //     role: null,
-    //     canAccessPoints: null,
-    //   }
-    // };
+    this.taxusService.userInfo().subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status, data } = response;
 
-    console.log(this.taxusService.userInfo())
+        if (status === ApiStatus.SUCCESS) {
+          const { status: accountStatus, adminMail, userMail } = data;
 
-    // this.taxusService.userInfo().subscribe({
-    //   next: (response: ApiResponse<any>) => {
-    //     const { status, data } = response;
+          this.statusInfo = {
+            ...this.statusInfo,
+            status: accountStatus === 'in-progress' ? 'pending' : accountStatus === 'rejected' ? 'denied' : accountStatus,
+            adminMail,
+            userMail,
+          }
+          this.accessStatus = accountStatus === 'in-progress' ? 'pending' : accountStatus === 'rejected' ? 'denied' : accountStatus;
 
-    //     if (status === ApiStatus.SUCCESS) {
-    //       const { role } = data;
-
-    //       if (role === null) {
-    //         this.getStatusInfo();
-    //       }
-    //     }
-    //   }
-    // })
+          console.log('data on', this.statusInfo)
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      }
+    })
   }
 
-  getStatusInfo() {
-    const response = {
-      status: 'success',
-      message: 'Status info fetched successfully.',
-      data: {
-        status: 'pending',
-        // status: 'rejected',
-        // status: 'deactivated',
-        adminEmail: 'admin@*****.com',
-        username: 'User Name',
+  getCacheSubEntity() {
+    this.taxusService.cacheSubEntity({ entityId: this.currentEntity }).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status } = response;
+        if (status === ApiStatus.SUCCESS) {
+          this.getUserInfo();
+        }
+      },
+      error: () => {
+        console.log('An error occurred');
       }
-    };
 
-    const { status, data } = response;
-
-    if (status === ApiStatus.SUCCESS) {
-      const {  status, adminEmail, username } = data;
-      this.statusInfo = {
-        ...this.statusInfo,
-        status,
-        adminEmail,
-        username,
-      };
-    }
+    })
   }
 
   getStatusIcon() {
     switch (this.statusInfo.status) {
       case 'pending':
         return AlarmClock;
-      case 'rejected':
+      case 'denied':
         return XCircle;
       case 'deactivated':
         return Ban;
