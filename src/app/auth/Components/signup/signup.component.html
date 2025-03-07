@@ -29,7 +29,7 @@
               [required]="true"
               formControlName="gstUsername"
               [errorMessage]="getErrorMessage('gstUsername') || gstUsernameError"
-              [customClass]="{ flex: '1', width: '17rem' }"
+              [customClass]="{ flex: '1', width: '17rem',   'padding-right': '6rem' }"
             ></ui-input>
 
             <div class="gstOtpSendBtn">
@@ -46,9 +46,9 @@
           </div>
         </div>
 
-        <div [ngClass]="{ isDisabled: !isGstDetailsFetched }">
+        <div *ngIf="isGstDetailsFetched" [ngClass]="{ isDisabled: !isGstDetailsFetched }">
           <ui-otp
-            label="GST Otp"
+            label="GST OTP"
             (otpEntered)="onGstOtpEntered($event)"
             [errorMessage]="getErrorMessage('gstOtp') || gstOtpError"
             [disabled]="!isGstDetailsFetched"
@@ -58,13 +58,13 @@
           <p *ngIf="!isGstOtpVerified" class="resend-otp">
             Didn’t Receive OTP?
             <a (click)="handleResendGstOtp()">Resend OTP</a>
-            <span *ngIf="resendTimer$ | async as timer">
-              in {{ timer }} Seconds</span
-            >
+            <!-- <span *ngIf="resendTimer > 0"> in {{ resendTimer }} Seconds</span> -->
+            <span *ngIf="tempTimer > 0"> in {{ tempTimer }} Seconds</span>
           </p>
+          <p>{{tempTimer}}</p>
         </div>
 
-        <div class="d-flex flex-row position-relative">
+        <div *ngIf="isGstOtpVerified" class="d-flex flex-row position-relative">
           <div class="w-100">
             <ui-input
             label="Company Name"
@@ -80,6 +80,16 @@
         </div>
       </ng-container>
 
+      <ng-container *ngIf="emailForm.value.accountType === '2' ? isGstOtpVerified : true">
+        <ui-input
+        label="Username"
+        placeholder="Enter your username"
+        [required]="true"
+        formControlName="name"
+        [errorMessage]="getErrorMessage('name')"
+        [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
+      ></ui-input>
+
       <ui-input
         label="Corporate E-Mail"
         placeholder="name@company.com"
@@ -88,6 +98,7 @@
         [errorMessage]="getErrorMessage('email') || emailError"
         [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
       ></ui-input>
+      </ng-container>
 
       <span class="termsInfo">
         <ui-input
@@ -106,7 +117,7 @@
         content="Proceed"
         [customStyle]="{ width: '100%' }"
         type="submit"
-        [loading]="isLoading"
+        [loading]="isLoading && emailForm.valid"
         [disabled]="emailForm.value.accountType === '1' ? emailForm.invalid : emailForm.invalid || !isGstOtpVerified"
       ></ui-button>
     </form>
@@ -144,7 +155,7 @@
 
         <p class="resend-otp">
           Didn’t Receive OTP? <a (click)="resendLoginOtp()">Resend OTP</a>
-          <span *ngIf="resendTimer$ | async as timer"> in {{ timer }} Seconds</span>
+          <span *ngIf="tempTimer > 0"> in {{ tempTimer }} Seconds</span>
         </p>
 
         <ui-button

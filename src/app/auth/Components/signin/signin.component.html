@@ -2,7 +2,29 @@
   <div class="formWrapper">
     <p class="heading">Login to your <span>TaxUS</span> Account</p>
 
-    <form (ngSubmit)="submitEmail()">
+
+    <form [formGroup]="emailForm" (ngSubmit)="submitEmail()">
+      <ui-input
+        type="email"
+        name="userEmail"
+        label="E-Mail Address"
+        placeholder="name@company.com"
+        [required]="true"
+        formControlName="email"
+        [errorMessage]="getErrorMessage('email') || emailError"
+        [isInvalid]="getErrorMessage('email') !== ''"
+      ></ui-input>
+
+      <ui-button
+        type="submit"
+        content="Login"
+        [customStyle]="{ width: '100%' }"
+        [loading]="isLoading"
+        [disabled]="emailForm.invalid"
+        ></ui-button>
+    </form>
+
+    <!-- <form (ngSubmit)="submitEmail()">
       <ui-input
         type="email"
         name="userEmail"
@@ -20,7 +42,7 @@
         [customStyle]="{ width: '100%' }"
         [loading]="isLoading"
         ></ui-button>
-      </form>
+    </form> -->
       <!-- [disabled]="userEmail === '' || emailError !== '' || isRestricedDomain()" -->
 
     <div class="createAccount">
@@ -60,7 +82,7 @@
 
         <p class="resend-otp">
           Didn’t Receive OTP? <a (click)="resendLoginOtp()">Resend OTP</a>
-          <span *ngIf="resendTimer$ | async as timer"> in {{ timer }} Seconds</span>
+          <span *ngIf="tempTimer > 0"> in {{ tempTimer }} Seconds</span>
         </p>
 
         <ui-button

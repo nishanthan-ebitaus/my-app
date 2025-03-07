@@ -21,9 +21,11 @@ section {
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow: auto;
+    padding: 2rem 0;
 
     .taxus-logo {
-      position: absolute;
+      position: fixed;
       top: 1.5rem;
       right: 2rem;
 

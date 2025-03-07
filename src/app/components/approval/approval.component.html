@@ -1,61 +1,80 @@
 <section
   class="d-flex flex-column align-items-center justify-content-center vh-100"
 >
-  <img class="bgImage w-100" src="/assets/images/approvalBg.webp" alt="" />
+  <img class="bgImage w-100" src="./assets/images/approvalBg.webp" alt="" />
 
   <mat-card class="card border-primary shadow-lg p-4">
     <mat-card-header class="header">
       <img
         class="img-fluid"
-        src="/assets/images/Taxus By Ebitaus.webp"
+        src="./assets/images/taxusEbitaus.webp"
         alt=""
       />
     </mat-card-header>
 
     <mat-card-content class="content">
-      <p>
-        We got an request to create an account from your company's GSTIN
-        <span>{{gstIN}}</span>
-      </p>
+      <ng-container *ngIf="isDataError">
+        <p>
+          Request token got expired
+        </p>
+      </ng-container>
 
-      <div class="userContent">
-        <label class="form-label fw-semibold">
-          Email Address associated with Account Creation
-        </label>
+      <ng-container *ngIf="!isDataError">
+        <p>
+          We got an request to create an account from your company's GSTIN
+          <span>{{ gstIN }}</span>
+        </p>
 
-        <div class="d-flex align-items-center border rounded px-2">
-          <mat-icon class="text-secondary">email</mat-icon>
-          <input disabled matInput class="form-control border-0 ms-2" [value]="userEmail" />
+        <div class="userContent">
+          <label class="form-label fw-semibold">
+            Email Address associated with Account Creation
+          </label>
+
+          <div class="d-flex align-items-center border rounded px-2">
+            <mat-icon class="text-secondary">email</mat-icon>
+            <input
+              disabled
+              matInput
+              class="form-control border-0 ms-2"
+              [value]="userEmail"
+            />
+          </div>
         </div>
-      </div>
 
-      <div *ngIf="approvalActionStatus === null" class="actions">
-        <button
-          (click)="updateApprovalInfo('deny')"
-          mat-flat-button
-          class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded"
-        >
-          <mat-icon>close</mat-icon> Deny
-        </button>
+        <div *ngIf="approvalActionStatus === null" class="actions">
+          <button
+            (click)="updateApprovalInfo('deny')"
+            mat-flat-button
+            class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded"
+          >
+            <mat-icon>close</mat-icon> Deny
+          </button>
 
-        <button
-          (click)="updateApprovalInfo('approve')"
-          mat-flat-button
-          class="btn btn-primary text-white d-flex align-items-center px-4 rounded"
-        >
-          <mat-icon>send</mat-icon> Approve
-        </button>
-      </div>
+          <button
+            (click)="updateApprovalInfo('approve')"
+            mat-flat-button
+            class="btn btn-primary text-white d-flex align-items-center px-4 rounded"
+          >
+            <mat-icon>send</mat-icon> Approve
+          </button>
+        </div>
 
-      <div *ngIf="approvalActionStatus !== null">
-        <p>Thank you! The user has been <span class="fw-semibold">{{ approvalActionStatus }}</span> successfully</p>
-      </div>
+        <div *ngIf="approvalActionStatus !== null">
+          <p>
+            Thank you! The user has been
+            <span class="fw-semibold">{{ approvalActionStatus }}</span>
+            successfully
+          </p>
+        </div>
+      </ng-container>
     </mat-card-content>
 
     <mat-card-footer class="mt-4">
       <p class="text-center">
         If you want to learn more about TaxUS, Please visit our
-        <a href="https://ebitaus.com/" target="_blank" rel="noopener noreferrer">Website</a>
+        <a href="https://ebitaus.com/" target="_blank" rel="noopener noreferrer"
+          >Website</a
+        >
       </p>
     </mat-card-footer>
   </mat-card>

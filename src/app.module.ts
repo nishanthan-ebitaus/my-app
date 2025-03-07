@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,10 +12,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthInterceptor } from './app/auht.interceptor';
 import { ApprovalComponent } from './app/components/approval/approval.component';
-import { HttpService } from './app/core/services/http.service';
-
+import { ApiInterceptor } from './api.interceptor';
 
 @NgModule({
   declarations: [
@@ -24,7 +23,14 @@ import { HttpService } from './app/core/services/http.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-right', // Position of the toast
+      timeOut: 300000,  // Duration the toast is visible (in ms)
+      closeButton: true, // Show close button
+      preventDuplicates: true, // Prevent duplicate toasts
+    }),
+
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
@@ -34,7 +40,7 @@ import { HttpService } from './app/core/services/http.service';
     HttpClientModule,
   ],
   providers: [provideHttpClient(),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
     // { provide: HTTP_INTERCEPTORS, useClass: HttpService, multi: true },
   ],
   bootstrap: [AppComponent]

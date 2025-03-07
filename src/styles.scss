@@ -89,6 +89,41 @@ a {
   font-style: normal;
 }
 
+.toast-container {
+  color: red !important;  /* Set text color to red */
+}
+
+.toast-success {
+  border-radius: 1rem !important;  /* Set border radius for rounded corners */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;  /* Add a subtle shadow */
+
+  // .toast-title {
+  //   color: white !important;  /* Change the title color inside the toast */
+  // }
+
+  // .toast-message {
+  //   color: black !important;  /* Change the message color */
+  // }
+}
+
+/* Hide the default icon in ngx-toastr */
+.toast-success .toast-message::before,
+.toast-error .toast-message::before,
+.toast-info .toast-message::before,
+.toast-warning .toast-message::before {
+  display: none !important; /* Hides the default icon */
+}
+
+
+/* Add more specific customization if needed */
+// .toast-success .toast-title {
+//   color: white !important;  /* Change the title color inside the toast */
+// }
+
+// .toast-success .toast-message {
+//   color: black !important;  /* Change the message color */
+// }
+
 // /* Importing Bootstrap SCSS file. */
 // @import 'bootstrap/scss/bootstrap';
 

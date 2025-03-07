@@ -4,6 +4,7 @@ import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model'
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { SigninStep } from '../../auth.model';
 import { AuthService } from '../../auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-signin',
@@ -12,20 +13,34 @@ import { AuthService } from '../../auth.service';
   styleUrl: './signin.component.scss'
 })
 export class SigninComponent implements OnInit, OnDestroy {
+  emailForm!: FormGroup;
   userEmail = '';
   emailError = '';
   userOtp!: string;
   otpError = '';
-  resendTimer$!: Observable<number>;
+  resendTimer!: number;
   signInFormStep!: SigninStep;
   isLoading = false;
+  tempTimer = 30;
+  isSubmitted = false;
 
   private destroy$ = new Subject<void>();
 
-  constructor(private signinService: AuthService, private router: Router) { }
+  constructor(private signinService: AuthService, private router: Router, private fb: FormBuilder) { }
 
   ngOnInit() {
-    this.resendTimer$ = this.signinService.startResendTimer();
+    this.signinService.startResendTimer();
+
+    console.log('on signin comp')
+
+    this.emailForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email, this.signinService.restrictedEmailDomainsValidator()]],
+    })
+
+    this.signinService.resendTimer$.subscribe((timer) => {
+      this.resendTimer = timer;
+      console.log('this.resendTimer', this.resendTimer)
+    });
 
     this.signinService.signinStep$
       .pipe(takeUntil(this.destroy$))
@@ -35,6 +50,36 @@ export class SigninComponent implements OnInit, OnDestroy {
           this.signinService.clearResendInterval();
         }
       });
+  }
+
+  getErrorMessage(field: string): string {
+    const control = this.emailForm.get(field);
+
+    if ((this.isSubmitted || control?.touched || control?.dirty) && control?.errors) {
+      if (control.hasError('required')) {
+        return 'Email is required';
+      }
+      if (control.hasError('email')) {
+        return 'Invalid email';
+      }
+      if (control.hasError('restrictedDomain')) {
+        return 'Enter your corporate email';
+      }
+    }
+    return '';
+  }
+
+  startTempTimer() {
+    this.tempTimer = 30;
+    const intervalId = setInterval(() => {
+      console.log('Timer:', this.tempTimer);
+      this.tempTimer--;
+
+      if (this.tempTimer <= 0) {
+        clearInterval(intervalId);
+        console.log('Timer finished');
+      }
+    }, 1000);
   }
 
   isRestricedDomain() {
@@ -57,39 +102,35 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   submitEmail() {
-    if (this.userEmail === '') {
-      this.emailError = 'Email is required';
-      return;
-    }
+    // if (this.userEmail === '') {
+    //   this.emailError = 'Email is required';
+    //   return;
+    // }
 
-    if (!this.signinService.validateEmail(this.userEmail)) {
-      this.emailError = 'Invalid email';
-      return;
-    }
+    // if (!this.signinService.validateEmail(this.userEmail)) {
+    //   this.emailError = 'Invalid email';
+    //   return;
+    // }
 
     this.emailError = '';
+    this.isSubmitted = true;
     this.handleSignin();
   }
 
   handleSignin() {
-    // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
-    // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
     this.isLoading = true;
-    this.signinService.signin({ username: this.userEmail }).subscribe({
+    this.signinService.signin({ username: this.emailForm.value.email }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
-          console.log("succeess");
+          console.log("success");
           this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
-        } else if (response.status === ApiStatus.FAIL) {
+          this.startTempTimer();
+        } else if (status === ApiStatus.FAIL) {
           if (message === 'User is not present') {
             this.emailError = message;
-            return;
-          }
-
-          if (message?.includes("You reached max attempt")) {
+          } else if (message?.includes("You reached max attempt")) {
             this.emailError = message;
-            return;
           }
         }
       },
@@ -102,10 +143,12 @@ export class SigninComponent implements OnInit, OnDestroy {
     });
   }
 
+
   resendLoginOtp() {
-    this.resendTimer$.subscribe((timerValue) => {
-      console.log(timerValue)
-      if (timerValue === 0) {
+    // this.resendTimer$.subscribe((timerValue) => {
+      console.log(this.tempTimer)
+      if (this.tempTimer === 0) {
+        this.startTempTimer();
         this.signinService.signin({ username: this.userEmail }).subscribe({
           next: (response: ApiResponse<any>) => {
             const { status, message } = response;
@@ -128,8 +171,10 @@ export class SigninComponent implements OnInit, OnDestroy {
             console.error('An error occurred. Please try again.', err);
           }
         });
+      } else {
+        console.log('re se rej')
       }
-    });
+    // });
   }
 
   verifyOtp() {
@@ -137,12 +182,12 @@ export class SigninComponent implements OnInit, OnDestroy {
     // localStorage.setItem('authToken', 'test');
     // window.location.href = '/';
     this.isLoading = true;
-    this.signinService.verifyOtp({ username: this.userEmail, otp: this.userOtp }).subscribe({
+    this.signinService.verifyOtp({ username: this.emailForm.value.email, otp: this.userOtp }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status } = response;
         if (status === ApiStatus.SUCCESS) {
           console.log("OTP verified");
-          this.router.navigate(['/'], { replaceUrl: true })
+          this.router.navigate([''], { replaceUrl: true })
         } else if (status === ApiStatus.FAIL) {
           this.otpError = 'Invalid OTP';
         }

@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '@src/app/auth/auth.service';
 import { filter } from 'rxjs/operators';
+import { ButtonComponent } from "../../shared/ui/button/button.component";
 
 @Component({
   selector: 'auth-layout',
   templateUrl: './auth-layout.component.html',
   styleUrls: ['./auth-layout.component.scss'],
+  imports: [ButtonComponent],
 })
 export class AuthLayoutComponent {
   currentRoute: string = '';

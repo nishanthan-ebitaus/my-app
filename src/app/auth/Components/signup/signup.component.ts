@@ -24,7 +24,7 @@ export class SignupComponent implements OnInit {
   isSubmitted = false;
   gstUsernameError = '';
   gstINError = '';
-  resendTimer$: Observable<number> = new Observable<number>();
+  resendTimer!: number;
   isGstDetailsFetched = false;
   isGstOtpVerified = false;
   isSignupSuccess = 'email';
@@ -39,6 +39,8 @@ export class SignupComponent implements OnInit {
   irpFormSubmitted = false;
   emailError = '';
   tickIcon = Check;
+  tempTimer = 30;
+  tempTimerSub: any;
 
   constructor(
     private authService: AuthService,
@@ -48,11 +50,12 @@ export class SignupComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.resendTimer$.subscribe((time) => {
-      if (time === 0) {
-        this.authService.clearResendInterval();
-      }
-    });
+    // this.authService.resendTimer$.subscribe((time) => {
+    //   if (time === 0) {
+    //     this.authService.clearResendInterval();
+    //   }
+    //   this.resendTimer = time;
+    // });
 
     this.irpForm = this.formBuilder.group({
       username: ['', Validators.required],
@@ -62,15 +65,17 @@ export class SignupComponent implements OnInit {
     this.emailForm = this.formBuilder.group({
       accountType: ['1', Validators.required],
       email: ['', [Validators.required, Validators.email, this.authService.restrictedEmailDomainsValidator()]],
+      name: ['', [Validators.required]],
       gstUsername: [''],
       gstIN: [''],
       gstOtp: [''],
       companyName: [''],
-      isAgree: ['', Validators.required],
+      isAgree: [false, this.authService.isTrueValidator()],
     });
 
     // Update validators dynamically when accountType changes
     this.emailForm.get('accountType')?.valueChanges.subscribe((selectedValue) => {
+      this.isSubmitted = false;
       this.updateConditionalValidators(selectedValue);
     });
 
@@ -94,6 +99,23 @@ export class SignupComponent implements OnInit {
           this.verifyGstOtp();
         }
       });
+  }
+
+  startTempTimer() {
+    this.tempTimer = 30;
+    if (this.tempTimerSub) {
+      clearInterval(this.tempTimerSub);
+    }
+    console.log('timer trigered')
+    this.tempTimerSub = setInterval(() => {
+      console.log('Timer:', this.tempTimer);
+      this.tempTimer--;
+
+      if (this.tempTimer <= 0) {
+        clearInterval(this.tempTimerSub);
+        console.log('Timer finished');
+      }
+    }, 1000);
   }
 
   submitIrpForm(isProceeding = false) {
@@ -162,9 +184,9 @@ export class SignupComponent implements OnInit {
 
   resendLoginOtp() {
     console.log('reached resendloginotp')
-    this.resendTimer$.subscribe((timerValue) => {
-      console.log(timerValue)
-      if (timerValue === 0) {
+    // this.resendTimer$.subscribe((timerValue) => {
+      console.log(this.tempTimer)
+      if (this.tempTimer === 0) {
         this.authService.signin({ username: this.emailForm.value.email }).subscribe({
           next: (response: ApiResponse<any>) => {
             const { status, message } = response;
@@ -188,7 +210,7 @@ export class SignupComponent implements OnInit {
           }
         });
       }
-    });
+    // });
   }
 
   gstDetails() {
@@ -234,7 +256,10 @@ export class SignupComponent implements OnInit {
   }
 
   requestGstOtp() {
-    this.resendTimer$ = this.authService.startResendTimer();
+    // this.authService.resendTimer$.subscribe((timer) => {
+    //   this.resendTimer = timer;
+    // });
+    this.startTempTimer();
     this.authService.requestGstOtp({ gstUsername: this.emailForm.get('gstUsername')?.value })
       .subscribe({
         next: (reponse: ApiResponse<any>) => {
@@ -249,8 +274,8 @@ export class SignupComponent implements OnInit {
   }
 
   handleResendGstOtp() {
-    this.resendTimer$.pipe(first()).subscribe((time) => {
-      if (time <= 0) {
+    // this.resendTimer$.pipe(first()).subscribe((time) => {
+      if (this.resendTimer <= 0) {
         this.authService.requestGstOtp({ gstUsername: this.emailForm.get('gstUsername')?.value })
           .subscribe({
             next: (reponse: ApiResponse<any>) => {
@@ -263,7 +288,7 @@ export class SignupComponent implements OnInit {
             }
           })
       }
-    })
+    // })
   }
 
   verifyGstOtp() {
@@ -297,6 +322,11 @@ export class SignupComponent implements OnInit {
         if (field === "gstOtp" && !this.isGstDetailsFetched) return;
 
         control?.setValidators([Validators.required]);
+
+        if (field === 'gstIN') {
+          console.log('gst field')
+          control?.setValidators([Validators.required, this.authService.gstValidator()]);
+        }
       } else {
         control?.clearValidators();
         control?.setValue('');
@@ -316,7 +346,10 @@ export class SignupComponent implements OnInit {
         return 'Invalid email';
       }
       if (control.hasError('restrictedDomain')) {
-        return 'Invalid email';
+        return 'Enter your corporate email';
+      }
+      if (control.hasError('invalidGST')) {
+        return 'Invalid GSTIN';
       }
       if (control.hasError('pattern')) {
         return 'OTP must be a 6-digit number';
@@ -329,6 +362,7 @@ export class SignupComponent implements OnInit {
     const messages: { [key: string]: string } = {
       accountType: 'Account Type is required',
       email: 'Email is required',
+      name: 'Username is required',
       gstUsername: 'GST Username is required',
       gstIN: 'GSTIN is required',
       gstOtp: 'OTP is required',
@@ -341,15 +375,17 @@ export class SignupComponent implements OnInit {
   signup() {
     this.isLoading = true;
     const gstIN = this.emailForm.get('gstIN')?.value;
-    const email = this.emailForm.get('email')?.value;
+    const email = this.emailForm.get('email')?.value?.toLowerCase();
+    const name = this.emailForm.get('name')?.value;
     const isAgree = this.emailForm.get('isAgree')?.value;
-    const payload = { gstIN, email, isAgree };
+    const payload = { gstIN, email, name, isAgree };
     this.authService.signup(payload).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
           // this.authService.setSignupStep(SignupStep.COMPANY_DETAILS);
           this.isSignupSuccess = 'otp';
+          this.startTempTimer();
         } else {
           if (message === 'User already exists') {
             this.emailError = message;

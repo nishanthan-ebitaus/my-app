@@ -1,5 +1,9 @@
 <header>
-  <p class="pageTitle">{{pageTitle}}</p>
+  <div class="head-con">
+    <p class="pageTitle">{{pageTitle}}</p>
+
+    <lucide-icon [name]="logoutIcon" (click)="handleLogout()" class="logoutIcon" ></lucide-icon>
+  </div>
 
   <div class="pageContent">
     <ng-container [ngSwitch]="activeLink">

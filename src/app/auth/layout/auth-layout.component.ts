@@ -21,6 +21,8 @@ export class AuthLayoutComponent {
 
     this.updateCurrentRoute();
     this.authService.logout()
+
+    console.log('on atuh')
   }
 
   private updateCurrentRoute(): void {

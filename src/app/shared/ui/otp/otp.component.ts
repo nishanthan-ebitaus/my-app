@@ -17,6 +17,7 @@ export class UiOtpComponent implements OnInit, OnChanges {
   @Input() label: string = '';
   @Input() errorMessage: string = '';
   @Input() inputProps: { [key: string]: any } = {};
+  @Input() defaultValue: string = '';  // New input for default value
   @Output() otpEntered = new EventEmitter<string>();
 
   otpValues: FormControl[] = [];
@@ -24,11 +25,17 @@ export class UiOtpComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initializeOtpControls();
+    if (this.defaultValue) {
+      this.fillOtpInputs(this.defaultValue);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["inputProps"] || changes["disabled"]) {
       this.initializeOtpControls();
+    }
+    if (changes["defaultValue"] && this.defaultValue) {
+      this.fillOtpInputs(this.defaultValue);
     }
   }
 
@@ -36,6 +43,15 @@ export class UiOtpComponent implements OnInit, OnChanges {
     this.otpValues = Array(this.length)
       .fill(null)
       .map(() => new FormControl({ value: '', disabled: this.disabled }, { ...this.inputProps }));
+  }
+
+  private fillOtpInputs(value: string): void {
+    value.split('').forEach((char, index) => {
+      if (index < this.length) {
+        this.otpValues[index].setValue(char);
+      }
+    });
+    this.emitOtp();
   }
 
   clearErrors(): void {

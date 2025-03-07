@@ -38,7 +38,8 @@ import { LucideAngularModule } from 'lucide-angular';
     VerifyOtpComponent,
     ReactiveFormsModule,
     MatIconModule,
-    LucideAngularModule
+    LucideAngularModule,
+    ButtonComponent,
   ],
   providers: [AuthService],
 })

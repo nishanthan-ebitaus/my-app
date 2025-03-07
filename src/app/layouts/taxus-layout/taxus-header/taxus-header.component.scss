@@ -5,8 +5,20 @@ header {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid global.$border-color;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: .5rem;
+
+  .head-con {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logoutIcon {
+      cursor: pointer;
+    }
+  }
 
   .pageTitle {
     font-size: 1.2rem;

@@ -1,13 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Router } from '@angular/router';
 import { API_URL } from '@core/constants/apiurls';
 import { ApiResponse, ApiStatus } from '@core/models/api-response.model';
-import { BehaviorSubject, debounceTime, fromEvent, merge, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, fromEvent, interval, merge, Observable, retry, switchMap, takeWhile, tap } from 'rxjs';
 import { GstDetailsMca, GstOtp, SigninRequest, SigninStep, Signup, SignupStep, VerifyGstOtp, VerifyOptRequest } from './auth.model';
-import { Router } from '@angular/router';
-import { environment } from '@environments/environment';
-import { HttpService } from '../core/services/http.service';
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +18,9 @@ export class AuthService {
   private signinStepSubject = new BehaviorSubject<SigninStep>(SigninStep.EMAIL_VERIFICATION);
   signinStep$ = this.signinStepSubject.asObservable();
 
+  private resendTimerSubject = new BehaviorSubject<number>(30);
+  resendTimer$ = this.resendTimerSubject.asObservable(); // Expose as Observable for UI components
   private resendInterval: any;
-  private resendTimer: number = 30;
 
   constructor(private http: HttpClient, private zone: NgZone, private router: Router) { }
 
@@ -80,7 +79,7 @@ export class AuthService {
     this.authTokenSubject.next(token);
   }
 
-  private removeToken() {
+  removeToken() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
   }
@@ -115,16 +114,49 @@ export class AuthService {
     this.clearResendInterval();
   }
 
+  gstValidator(): ValidatorFn {
+    const gstPattern = /^.{15}$/;
+
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const isValid = gstPattern.test(control.value);
+      console.log('GST Number:', control.value, isValid);
+      return isValid ? null : { invalidGST: true };
+    };
+  }
+
+
+
+  isTrueValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return control.value === true ? null : { mustBeTrue: true };
+    };
+  }
+
   restrictedEmailDomainsValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
         return null;
       }
 
-      const restrictedDomains = ['gmail.com', 'yahoo.com'];
+      const restrictedDomains = ['gmail', 'yahoo'];
       const emailParts = control.value.split('@');
 
-      if (emailParts.length === 2 && restrictedDomains.includes(emailParts[1].toLowerCase())) {
+      if (emailParts.length < 2) {
+        return { email: true }
+      }
+
+      const emailDomain = emailParts[1]?.toLowerCase()?.split('.')[0]; // only domain
+      const emailTLD = emailParts[1]?.toLowerCase()?.split('.')[1]; // only top level domain (.com / .in)
+
+      if (!emailTLD || emailTLD.length < 2) {
+        return { email: true };
+      }
+
+      if (emailParts.length === 2 && restrictedDomains.includes(emailDomain)) {
         return { restrictedDomain: true };
       }
 
@@ -143,25 +175,22 @@ export class AuthService {
     return false;
   }
 
-  startResendTimer(): Observable<number> {
-    return new Observable<number>((observer) => {
-      this.resendTimer = 30;
-      this.resendInterval = setInterval(() => {
-        this.resendTimer--;
-        observer.next(this.resendTimer);
-        if (this.resendTimer <= 0) {
+  startResendTimer(): void {
+    this.resendTimerSubject.next(5); // Reset timer to 30
+    this.resendInterval = interval(1000)
+      .pipe(takeWhile(() => this.resendTimerSubject.value > 0))
+      .subscribe(() => {
+        const newValue = this.resendTimerSubject.value - 1;
+        this.resendTimerSubject.next(newValue);
+        if (newValue <= 0) {
           this.clearResendInterval();
-          observer.complete();
         }
-      }, 1000);
-    });
+      });
   }
 
   clearResendInterval(): void {
     if (this.resendInterval) {
-      clearInterval(this.resendInterval);
-      this.resendInterval = null;
-      this.resendTimer = 0;
+      this.resendInterval.unsubscribe();
     }
   }
 

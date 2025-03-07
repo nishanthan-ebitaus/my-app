@@ -15,6 +15,7 @@ export class ApprovalComponent implements OnInit {
   gstIN: string = '';
   userEmail: string = '';
   approvalActionStatus: string | null = null;
+  isDataError = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +51,8 @@ export class ApprovalComponent implements OnInit {
             } else if (message === 'Already Rejected') {
               this.approvalActionStatus = 'denied';
             }
+          } else if (status === ApiStatus.ERROR) {
+              this.isDataError = true;
           }
         },
         error: (error) => {
