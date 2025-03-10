@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { finalize, Observable, Subject, takeUntil } from 'rxjs';
 import { SigninStep } from '../../auth.model';
 import { AuthService } from '../../auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -119,7 +119,12 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   handleSignin() {
     this.isLoading = true;
-    this.signinService.signin({ username: this.emailForm.value.email }).subscribe({
+    this.signinService.signin({ username: this.emailForm.value.email }).pipe(
+      finalize(() => {
+        console.log('on finalize');
+        this.isLoading = false;
+      })
+    ).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
@@ -139,6 +144,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
+        console.log('on complete')
       }
     });
   }

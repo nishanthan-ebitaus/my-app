@@ -1,4 +1,8 @@
-<div *ngIf="isSignupSuccess === 'email'" class="form-container" [ngClass]="{ 'ca-form': emailForm.value.accountType === '2' }">
+<div
+  *ngIf="isSignupSuccess === 'email'"
+  class="form-container"
+  [ngClass]="{ 'ca-form': emailForm.value.accountType === '2' }"
+>
   <div class="formWrapper">
     <p class="heading">Create An Account</p>
 
@@ -28,8 +32,14 @@
               placeholder="Gst Username"
               [required]="true"
               formControlName="gstUsername"
-              [errorMessage]="getErrorMessage('gstUsername') || gstUsernameError"
-              [customClass]="{ flex: '1', width: '17rem',   'padding-right': '6rem' }"
+              [errorMessage]="
+                getErrorMessage('gstUsername') || gstUsernameError
+              "
+              [customClass]="{
+                flex: '1',
+                width: '17rem',
+                'padding-right': '6rem'
+              }"
             ></ui-input>
 
             <div class="gstOtpSendBtn">
@@ -37,16 +47,27 @@
                 type="button"
                 [outlined]="true"
                 content="Send OTP"
-                [customStyle]="{ width: '100%', height: 'max-content', padding: '0.2rem 0.5rem', border: 'none' }"
+                [customStyle]="{
+                  width: '100%',
+                  height: 'max-content',
+                  padding: '0.2rem 0.5rem',
+                  border: 'none'
+                }"
                 (click)="gstDetails()"
-                [disabled]="isLoading || (emailForm.value.gstUsername === '' || emailForm.value.gstIN === '')"
+                [disabled]="
+                  isLoading ||
+                  emailForm.value.gstUsername === '' ||
+                    emailForm.value.gstIN === ''
+                "
               ></ui-button>
             </div>
-
           </div>
         </div>
 
-        <div *ngIf="isGstDetailsFetched" [ngClass]="{ isDisabled: !isGstDetailsFetched }">
+        <div
+          *ngIf="isGstDetailsFetched"
+          [ngClass]="{ isDisabled: !isGstDetailsFetched }"
+        >
           <ui-otp
             label="GST OTP"
             (otpEntered)="onGstOtpEntered($event)"
@@ -61,44 +82,53 @@
             <!-- <span *ngIf="resendTimer > 0"> in {{ resendTimer }} Seconds</span> -->
             <span *ngIf="tempTimer > 0"> in {{ tempTimer }} Seconds</span>
           </p>
-          <p>{{tempTimer}}</p>
+          <p>{{ tempTimer }}</p>
         </div>
 
         <div *ngIf="isGstOtpVerified" class="d-flex flex-row position-relative">
           <div class="w-100">
             <ui-input
-            label="Company Name"
-            placeholder="Company Name"
-            [required]="true"
-            formControlName="companyName"
-            [errorMessage]="getErrorMessage('companyName')"
-            [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
-            [readOnly]="emailForm.value.accountType === '2'"
-          ></ui-input>
+              label="Company Name"
+              placeholder="Company Name"
+              [required]="true"
+              formControlName="companyName"
+              [errorMessage]="getErrorMessage('companyName')"
+              [disabled]="
+                emailForm.value.accountType === '2' && !isGstOtpVerified
+              "
+              [readOnly]="emailForm.value.accountType === '2'"
+            ></ui-input>
           </div>
-        <lucide-icon *ngIf="isGstDetailsFetched" class="tickIcon" color="green" [name]="tickIcon" ></lucide-icon>
+          <lucide-icon
+            *ngIf="isGstDetailsFetched"
+            class="tickIcon"
+            color="green"
+            [name]="tickIcon"
+          ></lucide-icon>
         </div>
       </ng-container>
 
-      <ng-container *ngIf="emailForm.value.accountType === '2' ? isGstOtpVerified : true">
+      <!-- <ng-container
+        *ngIf="emailForm.value.accountType === '2' ? isGstOtpVerified : true"
+      > -->
         <ui-input
-        label="Username"
-        placeholder="Enter your username"
-        [required]="true"
-        formControlName="name"
-        [errorMessage]="getErrorMessage('name')"
-        [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
-      ></ui-input>
+          label="Username"
+          placeholder="Enter your username"
+          [required]="true"
+          formControlName="name"
+          [errorMessage]="getErrorMessage('name')"
+          [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
+        ></ui-input>
 
-      <ui-input
-        label="Corporate E-Mail"
-        placeholder="name@company.com"
-        [required]="true"
-        formControlName="email"
-        [errorMessage]="getErrorMessage('email') || emailError"
-        [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
-      ></ui-input>
-      </ng-container>
+        <ui-input
+          label="Corporate E-Mail"
+          placeholder="name@company.com"
+          [required]="true"
+          formControlName="email"
+          [errorMessage]="getErrorMessage('email') || emailError"
+          [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
+        ></ui-input>
+      <!-- </ng-container> -->
 
       <span class="termsInfo">
         <ui-input
@@ -118,11 +148,17 @@
         [customStyle]="{ width: '100%' }"
         type="submit"
         [loading]="isLoading && emailForm.valid"
-        [disabled]="emailForm.value.accountType === '1' ? emailForm.invalid : emailForm.invalid || !isGstOtpVerified"
+        [disabled]="
+          emailForm.value.accountType === '1'
+            ? emailForm.invalid
+            : emailForm.invalid || !isGstOtpVerified
+        "
       ></ui-button>
     </form>
 
-    <p class="siginLink">Already have an Account? <a routerLink="/auth/signin">Login</a></p>
+    <p class="siginLink">
+      Already have an Account? <a routerLink="/auth/signin">Login</a>
+    </p>
   </div>
 </div>
 
@@ -141,7 +177,8 @@
 
     <div>
       <p class="otp-label">
-        <span>OTP</span> <a (click)="changeEmailAddress()">Change Email Address</a>
+        <span>OTP</span>
+        <a (click)="changeEmailAddress()">Change Email Address</a>
       </p>
 
       <form (ngSubmit)="submitOtp()">
@@ -188,7 +225,13 @@
           placeholder="Enter your Username"
           formControlName="username"
         />
-        <p *ngIf="irpForm.get('username')?.invalid && (irpForm.get('username')?.touched || irpFormSubmitted)" class="text-danger">
+        <p
+          *ngIf="
+            irpForm.get('username')?.invalid &&
+            (irpForm.get('username')?.touched || irpFormSubmitted)
+          "
+          class="text-danger"
+        >
           Username is required
         </p>
       </div>
@@ -202,7 +245,13 @@
           type="password"
           formControlName="password"
         />
-        <p *ngIf="irpForm.get('password')?.invalid && (irpForm.get('password')?.touched || irpFormSubmitted)" class="text-danger">
+        <p
+          *ngIf="
+            irpForm.get('password')?.invalid &&
+            (irpForm.get('password')?.touched || irpFormSubmitted)
+          "
+          class="text-danger"
+        >
           Password is required
         </p>
       </div>
@@ -224,8 +273,6 @@
 
       <p class="text-center">You can add IRP Credentials later in Settings</p>
     </form>
-
-
   </div>
 </div>
 
