@@ -247,6 +247,15 @@ export class AuthService {
   }
 
   saveIRPCredentials(data: IrpCredentials) {
-    return this.http.post<ApiResponse<any>>(API_URL.USER.IRP_CREDENTIALS, { data });
+    return this.http.post<ApiResponse<any>>(API_URL.USER.IRP_CREDENTIALS, data);
   }
+
+  validateUserEmail(data: { email: string }) {
+    return this.http.post<ApiResponse<any>>(API_URL.AUTH.VALIDATE_EMAIL, data);
+  }
+
+  verifyUserEmailOtp(data: { email: string, otp: string }) {
+    return this.http.post<ApiResponse<any>>(API_URL.AUTH.VALIDATE_EMAIL_OTP, data);
+  }
+
 }

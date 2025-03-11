@@ -28,6 +28,7 @@ export class SignupComponent implements OnInit {
   isGstOtpVerified = false;
   isValidateEmailSent = false;
   isEmailValidated = false;
+  userEmailOtpError = '';
   isSignupSuccess = 'email';
   userOtp = '';
   userOtpError = '';
@@ -59,6 +60,7 @@ export class SignupComponent implements OnInit {
     this.emailForm = this.formBuilder.group({
       accountType: ['2', Validators.required],
       email: ['', [Validators.required, Validators.email, this.authService.restrictedEmailDomainsValidator()]],
+      userEmailOtp: [''],
       name: ['', [Validators.required]],
       gstUsername: [''],
       gstIN: [''],
@@ -85,21 +87,30 @@ export class SignupComponent implements OnInit {
         }
       });
 
-      this.emailForm.get('email')?.valueChanges.subscribe(() => {
-        this.emailError = '';
+    // verify userEmailOtp when user filled the userEmailOtp
+    this.emailForm.get('userEmailOtp')?.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((userEmailOtp) => {
+        if (userEmailOtp?.length === 6) {
+          this.verifyUserEmailOtp();
+        }
       });
 
-      this.emailForm.get('gstIN')?.valueChanges.subscribe(() => {
-        this.gstINError = '';
-      });
+    this.emailForm.get('email')?.valueChanges.subscribe(() => {
+      this.emailError = '';
+    });
 
-      this.emailForm.get('gstUsername')?.valueChanges.subscribe(() => {
-        this.gstUsernameError = '';
-      });
+    this.emailForm.get('gstIN')?.valueChanges.subscribe(() => {
+      this.gstINError = '';
+    });
 
-      this.emailForm.get('gstOtp')?.valueChanges.subscribe(() => {
-        this.gstOtpError = '';
-      });
+    this.emailForm.get('gstUsername')?.valueChanges.subscribe(() => {
+      this.gstUsernameError = '';
+    });
+
+    this.emailForm.get('gstOtp')?.valueChanges.subscribe(() => {
+      this.gstOtpError = '';
+    });
   }
 
   startTempTimer() {
@@ -225,11 +236,69 @@ export class SignupComponent implements OnInit {
     // });
   }
 
+  validateUserEmail() {
+    const email = this.emailForm.value.email;
+
+    // this.emailError = 'check the email';
+    // return;
+
+    // this.isValidateEmailSent = true;
+    // this.startTempTimer();
+    // return;
+
+    this.authService.validateUserEmail({ email }).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status, message } = response;
+        if (status === ApiStatus.SUCCESS) {
+          this.emailError = '';
+          this.isValidateEmailSent = true;
+          this.startTempTimer();
+        } else {
+            this.emailError = message || 'Invalid email';
+            return;
+        }
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    })
+  }
+
+  verifyUserEmailOtp() {
+    const otp = this.emailForm.get('userEmailOtp')?.value;
+    const email = this.emailForm.get('email')?.value;
+
+    // console.log('user otp', otp)
+    // this.userEmailOtpError = 'Invalid OTP';
+    // return;
+
+    // this.isEmailValidated = true;
+    // return;
+
+    this.authService.verifyUserEmailOtp({ email, otp })
+      .subscribe({
+        next: (response: ApiResponse<any>) => {
+          const { status } = response;
+          if (status === ApiStatus.SUCCESS) {
+            this.isEmailValidated = true;
+            clearInterval(this.tempTimerSub)
+          } else {
+            this.userEmailOtpError = 'Invalid OTP';
+          }
+        }
+      });
+  }
+
   gstDetails() {
     this.isLoading = true;
     const emailId = this.emailForm.get('email')?.value;
     const gstIN = this.emailForm.get('gstIN')?.value;
     const gstUsername = this.emailForm.get('gstUsername')?.value;
+
+    if (!this.isEmailValidated) {
+      this.emailError = 'Email is not validated';
+      return;
+    }
 
     if (!gstUsername) {
       this.gstUsernameError = 'GST Username is required';
@@ -304,6 +373,13 @@ export class SignupComponent implements OnInit {
     // })
   }
 
+  handleResendUserEmailOtp() {
+    if (this.tempTimer <= 0) {
+      clearInterval(this.tempTimerSub)
+      this.validateUserEmail();
+    }
+  }
+
   verifyGstOtp() {
     const otp = this.emailForm.get('gstOtp')?.value;
     const gstIN = this.emailForm.get('gstIN')?.value;
@@ -320,6 +396,10 @@ export class SignupComponent implements OnInit {
           }
         }
       });
+  }
+
+  onUserEmailOtpEntered(otp: string) {
+    this.emailForm.get('userEmailOtp')?.setValue(otp);
   }
 
   onGstOtpEntered(otp: string) {

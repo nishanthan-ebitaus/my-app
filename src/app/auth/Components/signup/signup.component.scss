@@ -33,6 +33,10 @@
       gap: 1.5rem;
       margin-bottom: 1rem;
 
+      .disableInteractions {
+        pointer-events: none;
+      }
+
       .gst-det-container {
         display: flex;
         align-items: start;
@@ -52,6 +56,7 @@
       }
 
       .emailContainer {
+        display: flex;
         position: relative;
 
         .validateEmailBtn {
@@ -63,6 +68,7 @@
 
       .isDisabled {
         opacity: 0.5;
+        pointer-events: none;
       }
 
       .termsInfo {

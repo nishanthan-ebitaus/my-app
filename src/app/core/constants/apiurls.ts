@@ -1,5 +1,7 @@
 export const API_URL = {
   AUTH: {
+    VALIDATE_EMAIL: '/auth/sendSignUpValidationEmail',
+    VALIDATE_EMAIL_OTP: '/auth/validateSignUpEmail',
     SIGNIN: '/auth/signIn',
     SIGNUP: '/auth/taxus/createTaxusUserAndEntity',
     VERIFY_OTP: '/auth/login',

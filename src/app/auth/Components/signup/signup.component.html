@@ -15,8 +15,97 @@
         [errorMessage]="getErrorMessage('accountType')"
       ></ui-select>
 
+      <ui-input
+        label="Username"
+        placeholder="Enter your name"
+        [required]="true"
+        formControlName="name"
+        [errorMessage]="getErrorMessage('name')"
+        [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
+      ></ui-input>
+
+      <div
+        class="emailContainer"
+        [ngClass]="{ disableInteractions: isEmailValidated }"
+      >
+        <div class="w-100">
+          <ui-input
+            label="Corporate E-Mail"
+            placeholder="name@company.com"
+            [required]="true"
+            formControlName="email"
+            [errorMessage]="getErrorMessage('email') || emailError"
+            [disabled]="
+              emailForm.value.accountType === '2' && !isGstOtpVerified
+            "
+            [readOnly]="isEmailValidated"
+          ></ui-input>
+        </div>
+
+        <div class="validateEmailBtn" *ngIf="!isEmailValidated">
+          <ui-button
+            type="button"
+            [outlined]="true"
+            content="Validate E-Mail"
+            [customStyle]="{
+              width: '100%',
+              height: 'max-content',
+              padding: '0.2rem 0.5rem',
+              border: 'none'
+            }"
+            (click)="validateUserEmail()"
+            [disabled]="emailForm.value.email === ''"
+          ></ui-button>
+        </div>
+
+        <lucide-icon
+          *ngIf="isEmailValidated"
+          class="tickIcon"
+          color="green"
+          [name]="tickIcon"
+        ></lucide-icon>
+      </div>
+
+      <div
+        *ngIf="isValidateEmailSent && !isEmailValidated"
+        [ngClass]="{ isDisabled: !isValidateEmailSent }"
+      >
+        <ui-otp
+          label="E-Mail OTP"
+          (otpEntered)="onUserEmailOtpEntered($event)"
+          [errorMessage]="getErrorMessage('userEmailOtp') || userEmailOtpError"
+          [disabled]="!isValidateEmailSent"
+        >
+        </ui-otp>
+
+        <p *ngIf="!isEmailValidated" class="resend-otp">
+          Didn’t Receive OTP?
+          <a (click)="handleResendUserEmailOtp()">Resend OTP</a>
+          <span *ngIf="tempTimer > 0"> in {{ tempTimer }} Seconds</span>
+        </p>
+      </div>
+
+      <!-- <div
+        *ngIf="isValidateEmailSent && isEmailValidated"
+        class="d-flex flex-row gap-2 align-items-center"
+      >
+        <p>Your E-Mail has been Verified</p>
+        <lucide-icon
+          *ngIf="isEmailValidated"
+          color="green"
+          size="22"
+          [name]="tickIcon"
+        ></lucide-icon>
+      </div> -->
+
       <ng-container *ngIf="emailForm.value.accountType === '2'">
-        <div class="gst-det-container">
+        <div
+          class="gst-det-container"
+          [ngClass]="{
+            isDisabled: !isEmailValidated,
+            disableInteractions: isGstOtpVerified
+          }"
+        >
           <ui-input
             label="GSTIN"
             placeholder="GST Number"
@@ -24,6 +113,7 @@
             formControlName="gstIN"
             [errorMessage]="getErrorMessage('gstIN') || gstINError"
             [inputProps]="{ maxLength: 15 }"
+            [readOnly]="!isEmailValidated"
           ></ui-input>
 
           <div class="gstIN">
@@ -37,9 +127,10 @@
               "
               [customClass]="{
                 flex: '1',
-                width: '17rem',
+                width: '100%',
                 'padding-right': '6rem'
               }"
+              [readOnly]="!isEmailValidated"
             ></ui-input>
 
             <div class="gstOtpSendBtn">
@@ -55,7 +146,6 @@
                 }"
                 (click)="gstDetails()"
                 [disabled]="
-                  isLoading ||
                   emailForm.value.gstUsername === '' ||
                   emailForm.value.gstIN === '' ||
                   gstUsernameError !== '' ||
@@ -88,7 +178,10 @@
           </p>
         </div>
 
-        <div *ngIf="isGstDetailsFetched && isGstOtpVerified" class="d-flex flex-row gap-2 align-items-center">
+        <div
+          *ngIf="isGstDetailsFetched && isGstOtpVerified"
+          class="d-flex flex-row gap-2 align-items-center"
+        >
           <p>Your GST Details has been Verified</p>
           <lucide-icon
             *ngIf="isGstDetailsFetched"
@@ -99,7 +192,7 @@
         </div>
 
         <div *ngIf="isGstOtpVerified" class="d-flex flex-row position-relative">
-          <div class="w-100">
+          <div class="w-100 disableInteractions">
             <ui-input
               label="Company Name"
               placeholder="Company Name"
@@ -121,49 +214,17 @@
         </div>
       </ng-container>
 
-      <!-- <ng-container
-        *ngIf="emailForm.value.accountType === '2' ? isGstOtpVerified : true"
-      > -->
-        <ui-input
-          label="Username"
-          placeholder="Enter your name"
-          [required]="true"
-          formControlName="name"
-          [errorMessage]="getErrorMessage('name')"
-          [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
-        ></ui-input>
-
-        <ui-input
-          label="Corporate E-Mail"
-          placeholder="name@company.com"
-          [required]="true"
-          formControlName="email"
-          [errorMessage]="getErrorMessage('email') || emailError"
-          [disabled]="emailForm.value.accountType === '2' && !isGstOtpVerified"
-        ></ui-input>
-      <!-- </ng-container> -->
-
-      <!-- <span class="termsInfo">
-        <ui-input
-          type="checkbox"
-          formControlName="isAgree"
-          [errorMessage]="getErrorMessage('isAgree')"
-        ></ui-input>
-        <span>
-          I agree to the
-          <a (click)="updateTermsModal()">Terms & Conditions</a> and
-          <a (click)="updateTermsModal()">Privacy Policy</a>
-        </span>
-      </span> -->
-
       <ui-input
         type="checkbox"
         formControlName="isAgree"
         [errorMessage]="getErrorMessage('isAgree')"
       >
-        <span>I agree to the <a href="#" (click)="updateTermsModal()">Terms & Conditions</a> and <a href="#" (click)="updateTermsModal()">Privacy Policy</a></span>
+        <span>
+          I agree to the
+          <a (click)="updateTermsModal()">Terms & Conditions</a> and
+          <a (click)="updateTermsModal()">Privacy Policy</a></span
+        >
       </ui-input>
-
 
       <ui-button
         content="Proceed"

@@ -38,7 +38,6 @@ export class InputComponent implements ControlValueAccessor {
       .join(';');
   }
 
-
   get processedLabel() {
     return this.label ? this.label.toLowerCase().replace(/ /g, '-') : '';
   }
