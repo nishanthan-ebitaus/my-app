@@ -43,7 +43,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   ],
   providers: [provideHttpClient(),
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
-    // { provide: HTTP_INTERCEPTORS, useClass: HttpService, multi: true },
   ],
   bootstrap: [AppComponent]
 })
