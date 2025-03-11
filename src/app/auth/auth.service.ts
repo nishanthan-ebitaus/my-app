@@ -64,7 +64,7 @@ export class AuthService {
     return localStorage.getItem('authToken');
   }
 
-  private setAuthToken(token: string): void {
+  setAuthToken(token: string): void {
     localStorage.setItem('authToken', token);
     this.authTokenSubject.next(token);
   }
@@ -73,7 +73,7 @@ export class AuthService {
     return localStorage.getItem('authToken');
   }
 
-  private setRefreshToken(token: string): void {
+  setRefreshToken(token: string): void {
     localStorage.setItem('refreshToken', token);
     this.authTokenSubject.next(token);
   }

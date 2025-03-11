@@ -489,12 +489,17 @@ export class SignupComponent implements OnInit {
     const payload = { gstIN, email, username: name, isAgree };
     this.authService.signup(payload).subscribe({
       next: (response: ApiResponse<any>) => {
-        const { status, message } = response;
+        const { status, message, data } = response;
         if (status === ApiStatus.SUCCESS) {
-          // this.authService.setSignupStep(SignupStep.COMPANY_DETAILS);
-          this.isSignupSuccess = 'otp';
+          const { authToken, refreshToken } = data;
+          // const authToken = 'auth';
+          // const refreshToken = 'refresh'
+          this.authService.setAuthToken(authToken);
+          this.authService.setRefreshToken(refreshToken);
+
+          // this.isSignupSuccess = 'otp';
+          this.isSignupSuccess = 'irp';
           this.startTempTimer();
-          // this.taxusService. complete the cache
         } else {
           if (message === 'User already exists') {
             this.emailError = message;
