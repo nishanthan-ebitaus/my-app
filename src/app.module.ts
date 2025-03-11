@@ -31,7 +31,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       closeButton: true,
       preventDuplicates: true,
     }),
-
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
