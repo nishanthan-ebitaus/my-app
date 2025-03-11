@@ -1,20 +1,23 @@
 <div class="layout-container">
-
   <!-- <ng-container *ngIf="isLoading">
     <mat-spinner diameter="40" class="loader" color="black"></mat-spinner>
   </ng-container> -->
 
   <ng-container>
     <aside class="sidebar">
-      <img src="/assets/images/Logo (1).png" alt="Logo" class="logo">
+      <img src="/assets/images/Logo (1).png" alt="Logo" class="logo" />
 
       <nav>
         <p class="listTitle">MAIN MENU</p>
         <ul>
-          <li *ngFor="let item of mainMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
+          <li
+            *ngFor="let item of mainMenu"
+            [routerLink]="item.routerLink"
+            [ngClass]="{ activeLink: isActive(item.routerLink) }"
+          >
             <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
             <span class="menuItem">
-              <img [src]="item.icon" alt="icon">
+              <img [src]="item.icon" alt="icon" />
               <p>{{ item.name }}</p>
             </span>
           </li>
@@ -22,10 +25,14 @@
 
         <p class="listTitle">OTHER</p>
         <ul>
-          <li *ngFor="let item of otherMenu" [routerLink]="item.routerLink" [ngClass]="{ 'activeLink': isActive(item.routerLink) }">
+          <li
+            *ngFor="let item of otherMenu"
+            [routerLink]="item.routerLink"
+            [ngClass]="{ activeLink: isActive(item.routerLink) }"
+          >
             <div *ngIf="isActive(item.routerLink)" class="activeBar"></div>
             <span class="menuItem">
-              <img [src]="item.icon" alt="icon">
+              <img [src]="item.icon" alt="icon" />
               <p>{{ item.name }}</p>
             </span>
           </li>
@@ -34,22 +41,33 @@
     </aside>
 
     <main>
-      <taxus-header [activeLink]="activeLink$ | async" [pageTitle]="pageTitle"></taxus-header>
+      <taxus-header
+        [activeLink]="activeLink$ | async"
+        [pageTitle]="pageTitle"
+      ></taxus-header>
 
       <section>
-        <router-outlet *ngIf="isLoading === false && statusInfo.status !== 'pending'" ></router-outlet>
+        <router-outlet
+          *ngIf="isLoading === false && statusInfo.status !== 'pending'"
+        ></router-outlet>
 
-        <ui-modal class="access-modal" [showClose]="false" >
-          <div modal-content >
+        <ui-modal
+          *ngIf="!isLoading && accessStatus !== 'accepted'"
+          class="access-modal"
+          [showClose]="false"
+        >
+          <div modal-content>
             <div class="status-wrapper">
-              <img [src]="accessPending" alt="" class="status-img">
+              <img [src]="accessPending" alt="" class="status-img" />
             </div>
 
             <div class="status-content">
               <p class="heading">Account Pending Approval</p>
 
               <p class="desc">
-                Thank you for signing up to TAXUS, Your Account Activation is pending approval from your Corporate Admin {{ statusInfo.adminMail }}
+                Thank you for signing up to TAXUS, Your Account Activation is
+                pending approval from your Corporate Admin
+                {{ statusInfo.adminMail }}
               </p>
 
               <div *ngIf="isLoading">
@@ -63,27 +81,40 @@
                 </div>
 
                 <div class="status" [ngClass]="accessStatus">
-                  <lucide-icon [name]="getStatusIcon()" [color]="accessStatus === 'denied' ? 'red' : '#CD9D00'"></lucide-icon>
+                  <lucide-icon
+                    [name]="getStatusIcon()"
+                    [color]="accessStatus === 'denied' ? 'red' : '#CD9D00'"
+                  ></lucide-icon>
 
-                  <p>{{ statusInfo.status.charAt(0).toUpperCase() + statusInfo.status.slice(1) }}</p>
+                  <p>
+                    {{
+                      statusInfo.status.charAt(0).toUpperCase() +
+                        statusInfo.status.slice(1)
+                    }}
+                  </p>
                 </div>
               </div>
 
-              <ui-button
-              type="button"
-              [loading]="isSendingApproval"
-              (click)="sendApprovalRequest()"
-              content="Resend Approval"
-            >
-            </ui-button>
+              <ng-container *ngIf="accessStatus === 'pending'">
+                <ui-button
+                  type="button"
+                  [loading]="isSendingApproval"
+                  (click)="sendApprovalRequest()"
+                  content="Resend Approval"
+                >
+                </ui-button>
+              </ng-container>
 
-              <p *ngIf="accessStatus === 'pending'">You will be notified in your email once approved...</p>
-              <p *ngIf="accessStatus === 'denied'">Sorry your account opening request has been rejected. For more information contact your Corporate Admin</p>
+              <p *ngIf="accessStatus === 'pending'">
+                You will be notified in your email once approved...
+              </p>
+              <p *ngIf="accessStatus === 'denied'">
+                Sorry your account opening request has been rejected. For more
+                information contact your Corporate Admin
+              </p>
             </div>
-
           </div>
         </ui-modal>
-
       </section>
     </main>
   </ng-container>

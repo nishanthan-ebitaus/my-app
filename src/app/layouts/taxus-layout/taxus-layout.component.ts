@@ -10,6 +10,7 @@ import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model'
 import { TaxusLayoutService } from './taxus-layout.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ButtonComponent } from "../../shared/ui/button/button.component";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'layout-taxus',
@@ -96,6 +97,7 @@ export class TaxusLayoutComponent implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private taxusService: TaxusLayoutService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -219,6 +221,7 @@ export class TaxusLayoutComponent implements OnInit {
         if (status === ApiStatus.SUCCESS) {
           // this.getUserInfo();
           console.log('Resend Email Sent successfully!')
+          this.toastr.info('E-Mail triggered successfully!');
         }
       }
     })

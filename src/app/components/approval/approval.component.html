@@ -32,7 +32,6 @@
             <div class="d-flex align-items-center border rounded px-2">
               <mat-icon class="text-secondary">email</mat-icon>
               <input
-                disabled
                 matInput
                 class="form-control border-0 ms-2"
                 [value]="userEmail"
@@ -42,7 +41,7 @@
 
           <div *ngIf="approvalActionStatus === null" class="actions">
             <button
-              (click)="updateApprovalInfo('deny')"
+              (click)="updateApprovalInfo('reject')"
               mat-flat-button
               class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded"
             >

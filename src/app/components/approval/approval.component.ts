@@ -68,7 +68,7 @@ export class ApprovalComponent implements OnInit {
 
   updateApprovalInfo(action: string) {
     if (this.token) {
-      this.approvalActionStatus = action === 'deny' ? 'denied' : 'approved';
+      this.approvalActionStatus = action === 'reject' ? 'denied' : 'approved';
       this.approvalService.updateApprovalInfo(this.token, action.toUpperCase()).subscribe();
     }
   }

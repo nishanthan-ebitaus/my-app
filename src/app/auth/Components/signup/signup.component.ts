@@ -7,6 +7,7 @@ import { Check } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 import { SignupStep } from '../../auth.model';
+import { TaxusLayoutService } from '@src/app/layouts/taxus-layout/taxus-layout.service';
 
 @Component({
   selector: 'app-signup',
@@ -49,6 +50,7 @@ export class SignupComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private toastr: ToastrService,
+    private taxusService: TaxusLayoutService,
   ) { }
 
   ngOnInit() {
@@ -243,24 +245,14 @@ export class SignupComponent implements OnInit {
   validateUserEmail() {
     const email = this.emailForm.value.email;
 
-    // this.emailError = 'check the email';
-    // return;
-
-    // this.isValidateEmailSent = true;
-    // this.startTempTimer();
-    // return;
-
     this.authService.validateUserEmail({ email }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
-          if (message === 'Email already registered') {
-            this.emailError = 'E-Mail already registered';
-            return;
-          }
           this.emailError = '';
           this.isValidateEmailSent = true;
           this.startTempTimer();
+          this.toastr.info('OTP has been sent to your E-Mail!')
         } else {
             this.emailError = message || 'Invalid email';
             return;
@@ -276,25 +268,13 @@ export class SignupComponent implements OnInit {
     const otp = this.emailForm.get('userEmailOtp')?.value;
     const email = this.emailForm.get('email')?.value;
 
-    // console.log('user otp', otp)
-    // this.userEmailOtpError = 'Invalid OTP';
-    // return;
-
-    // this.isEmailValidated = true;
-    // return;
-
     this.authService.verifyUserEmailOtp({ email, otp })
       .subscribe({
         next: (response: ApiResponse<any>) => {
-          const { status, message } = response;
+          const { status } = response;
           if (status === ApiStatus.SUCCESS) {
-
-            if (typeof message === 'string' && message.toLowerCase().includes('invalid')) {
-              this.userEmailOtpError = message;
-              return;
-            }
             this.isEmailValidated = true;
-            this.toastr.success('E-Mail is verified successfully!')
+            this.toastr.success('E-Mail has been verified successfully!')
             clearInterval(this.tempTimerSub)
           } else {
             this.userEmailOtpError = 'Invalid OTP';
@@ -348,9 +328,6 @@ export class SignupComponent implements OnInit {
   }
 
   requestGstOtp() {
-    // this.authService.resendTimer$.subscribe((timer) => {
-    //   this.resendTimer = timer;
-    // });
     this.startTempTimer();
     this.authService.requestGstOtp({ gstUsername: this.emailForm.get('gstUsername')?.value })
       .subscribe({
@@ -358,6 +335,7 @@ export class SignupComponent implements OnInit {
           const { status } = reponse;
           if (status === ApiStatus.SUCCESS) {
             // this.verifyGstOtp();
+            this.toastr.info('OTP has been sent to the authorized signatory!')
           } else {
             console.log('toast');
           }
@@ -402,7 +380,7 @@ export class SignupComponent implements OnInit {
           if (status === ApiStatus.SUCCESS) {
             this.isGstOtpVerified = true;
             clearInterval(this.tempTimerSub)
-            this.toastr.success('GSTIN is verified successfully!')
+            this.toastr.success('GSTIN has been verified successfully!')
           } else {
             this.gstOtpError = 'Invalid OTP';
           }
@@ -503,20 +481,19 @@ export class SignupComponent implements OnInit {
       next: (response: ApiResponse<any>) => {
         const { status, message, data } = response;
         if (status === ApiStatus.SUCCESS) {
-          if (typeof message === 'string' && message.toLowerCase().includes('invalid')) {
-            this.emailError = message;
-            return;
-          }
-
-          // const { authToken, refreshToken } = data;
+          const { authToken, refreshToken, entityId } = data;
           // const authToken = 'auth';
           // const refreshToken = 'refresh'
-          // this.authService.setAuthToken(authToken);
-          // this.authService.setRefreshToken(refreshToken);
+          this.authService.setAuthToken(authToken);
+          this.authService.setRefreshToken(refreshToken);
 
-          this.isSignupSuccess = 'otp';
-          // this.isSignupSuccess = 'irp';
-          this.startTempTimer();
+          // this.isSignupSuccess = 'otp';
+          // this.startTempTimer();
+          if (this.emailForm.value.accountType === '2') {
+            this.cacheSubEntity(entityId);
+          } else {
+            window.location.href = '/';
+          }
           this.toastr.success('Your account has been created!')
         } else {
           if (typeof message === 'string') {
@@ -528,6 +505,17 @@ export class SignupComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  cacheSubEntity(entityId: string) {
+    this.taxusService.cacheSubEntity({ entityId }).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status } = response;
+        if (status === ApiStatus.SUCCESS) {
+          this.isSignupSuccess = 'irp';
+        }
+      }
+    })
   }
 
   updateTermsModal() {
