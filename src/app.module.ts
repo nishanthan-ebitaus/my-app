@@ -40,7 +40,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule,
     HttpClientModule,
   ],
-  providers: [provideHttpClient(),
+  providers: [
+    provideHttpClient(),
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
