@@ -27,6 +27,28 @@
       }
     }
 
+    .docs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .doc {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .detail {
+          p {
+            color: global.$headerColor;
+
+            span {
+              color: global.$secondary-text;
+            }
+          }
+        }
+      }
+    }
+
     form {
       display: flex;
       flex-direction: column;

@@ -1,3 +1,40 @@
+<div *ngIf="isSignupSuccess === 'req-docs'" class="form-container">
+  <div class="formWrapper">
+    <p class="heading">Details Required for Account Creation</p>
+
+    <span>
+      Make sure you have the following Information before proceeding with Taxus
+      Account Creation
+    </span>
+
+    <div class="docs-container">
+      <div class="doc">
+        <img src="./assets/images/gst-badge.png" alt="GST" />
+
+        <div class="detail">
+          <p>GST Details</p>
+          <span>GSTIN | GST Username</span>
+        </div>
+      </div>
+      <div class="doc">
+        <img src="./assets/images/irp-badge.png" alt="IRP" />
+        <div class="detail">
+          <p>IRP Credentials <span>(Optional)</span></p>
+          <span>Username | Password</span>
+        </div>
+      </div>
+    </div>
+
+    <ui-button
+      type="button"
+      content="Proceed"
+      [customStyle]="{ width: '100%' }"
+      [loading]="isLoading"
+      (click)="updateSignupStep('email')"
+    ></ui-button>
+  </div>
+</div>
+
 <div
   *ngIf="isSignupSuccess === 'email'"
   class="form-container"
@@ -245,12 +282,6 @@
   </div>
 </div>
 
-<!-- <auth-verify-otp
-  *ngIf="isSignupSuccess"
-  (enteredOtp)="handleSignupUserOtp($event)"
-  [errorMessage]="userOtpError"
-></auth-verify-otp> -->
-
 <div *ngIf="isSignupSuccess === 'otp'" class="form-container">
   <div class="formWrapper">
     <div>
@@ -304,7 +335,7 @@
         <label class="form-label fw-semibold mb-1">Username</label>
         <input
           matInput
-          class="form-control border-0 p-2"
+          class="form-control bg-light border-0 p-2"
           placeholder="Enter your name"
           formControlName="username"
         />
@@ -323,7 +354,7 @@
         <label class="form-label fw-semibold mb-1">Password</label>
         <input
           matInput
-          class="form-control border-0 p-2"
+          class="form-control bg-light border-0 p-2"
           placeholder="Enter your Password"
           type="password"
           formControlName="password"

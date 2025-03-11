@@ -30,7 +30,9 @@ $primaryText: #424A5A;
 $secondaryText: #838998;
 $secondaryTextDim: #FBFBFC;
 $primaryBlue: #02327E;
-$authWrapper: #02327E0A;
+// $authWrapper: #02327E0A;
+$authWrapper: #FFFFFF;
+$primaryBg:  #F4F4F4;
 $copper: #CE8769;
 
 * {
@@ -43,6 +45,7 @@ body {
   font-family: "Inter", sans-serif;
   font-size: 14px;
   color: $primary-text;
+  background-color: $primaryBg;
 }
 
 a {

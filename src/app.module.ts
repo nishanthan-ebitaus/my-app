@@ -27,7 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',
-      timeOut: 300000,
+      timeOut: 2000,
       closeButton: true,
       preventDuplicates: true,
     }),

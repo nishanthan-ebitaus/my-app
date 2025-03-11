@@ -29,7 +29,7 @@ export class SignupComponent implements OnInit {
   isValidateEmailSent = false;
   isEmailValidated = false;
   userEmailOtpError = '';
-  isSignupSuccess = 'email';
+  isSignupSuccess = 'req-docs';
   userOtp = '';
   userOtpError = '';
   gstOtpError = '';
@@ -111,6 +111,10 @@ export class SignupComponent implements OnInit {
     this.emailForm.get('gstOtp')?.valueChanges.subscribe(() => {
       this.gstOtpError = '';
     });
+  }
+
+  updateSignupStep(step: string) {
+    this.isSignupSuccess = step;
   }
 
   startTempTimer() {
@@ -250,6 +254,10 @@ export class SignupComponent implements OnInit {
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
+          if (message === 'Email already registered') {
+            this.emailError = 'E-Mail already registered';
+            return;
+          }
           this.emailError = '';
           this.isValidateEmailSent = true;
           this.startTempTimer();
@@ -278,9 +286,15 @@ export class SignupComponent implements OnInit {
     this.authService.verifyUserEmailOtp({ email, otp })
       .subscribe({
         next: (response: ApiResponse<any>) => {
-          const { status } = response;
+          const { status, message } = response;
           if (status === ApiStatus.SUCCESS) {
+
+            if (typeof message === 'string' && message.toLowerCase().includes('invalid')) {
+              this.userEmailOtpError = message;
+              return;
+            }
             this.isEmailValidated = true;
+            this.toastr.success('E-Mail is verified successfully!')
             clearInterval(this.tempTimerSub)
           } else {
             this.userEmailOtpError = 'Invalid OTP';
@@ -323,9 +337,6 @@ export class SignupComponent implements OnInit {
           if (message === 'This GstIN is already registered') {
             // this.showModal = true;
             this.gstINError = 'This GSTIN is already registered';
-            this.toastr.info('everything is broken', 'Major Error', {
-              timeOut: 3000,
-            })
             return;
           }
         }
@@ -391,6 +402,7 @@ export class SignupComponent implements OnInit {
           if (status === ApiStatus.SUCCESS) {
             this.isGstOtpVerified = true;
             clearInterval(this.tempTimerSub)
+            this.toastr.success('GSTIN is verified successfully!')
           } else {
             this.gstOtpError = 'Invalid OTP';
           }
@@ -491,17 +503,23 @@ export class SignupComponent implements OnInit {
       next: (response: ApiResponse<any>) => {
         const { status, message, data } = response;
         if (status === ApiStatus.SUCCESS) {
-          const { authToken, refreshToken } = data;
+          if (typeof message === 'string' && message.toLowerCase().includes('invalid')) {
+            this.emailError = message;
+            return;
+          }
+
+          // const { authToken, refreshToken } = data;
           // const authToken = 'auth';
           // const refreshToken = 'refresh'
-          this.authService.setAuthToken(authToken);
-          this.authService.setRefreshToken(refreshToken);
+          // this.authService.setAuthToken(authToken);
+          // this.authService.setRefreshToken(refreshToken);
 
-          // this.isSignupSuccess = 'otp';
-          this.isSignupSuccess = 'irp';
+          this.isSignupSuccess = 'otp';
+          // this.isSignupSuccess = 'irp';
           this.startTempTimer();
+          this.toastr.success('Your account has been created!')
         } else {
-          if (message === 'User already exists') {
+          if (typeof message === 'string') {
             this.emailError = message;
           }
         }

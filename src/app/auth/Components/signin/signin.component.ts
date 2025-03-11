@@ -5,6 +5,7 @@ import { finalize, Observable, Subject, takeUntil } from 'rxjs';
 import { SigninStep } from '../../auth.model';
 import { AuthService } from '../../auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signin',
@@ -26,7 +27,12 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private signinService: AuthService, private router: Router, private fb: FormBuilder) { }
+  constructor(
+    private signinService: AuthService,
+    private router: Router,
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+  ) { }
 
   ngOnInit() {
     this.signinService.startResendTimer();
@@ -180,6 +186,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         if (status === ApiStatus.SUCCESS) {
           console.log("OTP verified");
           this.router.navigate([''], { replaceUrl: true })
+          this.toastr.success('Successfully Signed In!')
         } else if (status === ApiStatus.FAIL) {
           this.otpError = 'Invalid OTP';
         }
