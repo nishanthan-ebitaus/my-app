@@ -57,7 +57,11 @@
                 [disabled]="
                   isLoading ||
                   emailForm.value.gstUsername === '' ||
-                    emailForm.value.gstIN === ''
+                  emailForm.value.gstIN === '' ||
+                  gstUsernameError !== '' ||
+                  gstINError !== '' ||
+                  getErrorMessage('gstUsername') !== '' ||
+                  getErrorMessage('gstIN') !== ''
                 "
               ></ui-button>
             </div>
@@ -65,7 +69,7 @@
         </div>
 
         <div
-          *ngIf="isGstDetailsFetched"
+          *ngIf="isGstDetailsFetched && !isGstOtpVerified"
           [ngClass]="{ isDisabled: !isGstDetailsFetched }"
         >
           <ui-otp
@@ -82,7 +86,16 @@
             <!-- <span *ngIf="resendTimer > 0"> in {{ resendTimer }} Seconds</span> -->
             <span *ngIf="tempTimer > 0"> in {{ tempTimer }} Seconds</span>
           </p>
-          <p>{{ tempTimer }}</p>
+        </div>
+
+        <div *ngIf="isGstDetailsFetched && isGstOtpVerified" class="d-flex flex-row gap-2 align-items-center">
+          <p>Your GST Details has been Verified</p>
+          <lucide-icon
+            *ngIf="isGstDetailsFetched"
+            color="green"
+            size="22"
+            [name]="tickIcon"
+          ></lucide-icon>
         </div>
 
         <div *ngIf="isGstOtpVerified" class="d-flex flex-row position-relative">
@@ -113,7 +126,7 @@
       > -->
         <ui-input
           label="Username"
-          placeholder="Enter your username"
+          placeholder="Enter your name"
           [required]="true"
           formControlName="name"
           [errorMessage]="getErrorMessage('name')"
@@ -130,7 +143,7 @@
         ></ui-input>
       <!-- </ng-container> -->
 
-      <span class="termsInfo">
+      <!-- <span class="termsInfo">
         <ui-input
           type="checkbox"
           formControlName="isAgree"
@@ -141,7 +154,16 @@
           <a (click)="updateTermsModal()">Terms & Conditions</a> and
           <a (click)="updateTermsModal()">Privacy Policy</a>
         </span>
-      </span>
+      </span> -->
+
+      <ui-input
+        type="checkbox"
+        formControlName="isAgree"
+        [errorMessage]="getErrorMessage('isAgree')"
+      >
+        <span>I agree to the <a href="#" (click)="updateTermsModal()">Terms & Conditions</a> and <a href="#" (click)="updateTermsModal()">Privacy Policy</a></span>
+      </ui-input>
+
 
       <ui-button
         content="Proceed"
@@ -172,7 +194,7 @@
   <div class="formWrapper">
     <div>
       <p class="otp-det">OTP has been sent to</p>
-      <p class="email">{{ maskEmail(emailForm.value.email) }}</p>
+      <p class="email">{{ emailForm.value.email }}</p>
     </div>
 
     <div>
@@ -222,7 +244,7 @@
         <input
           matInput
           class="form-control border-0 p-2"
-          placeholder="Enter your Username"
+          placeholder="Enter your name"
           formControlName="username"
         />
         <p

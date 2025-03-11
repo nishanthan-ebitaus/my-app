@@ -25,4 +25,8 @@ export class TaxusLayoutService {
     return this.http.post<ApiResponse<any>>(API_URL.USER.CACHE_SUB_ENTITY, data);
   }
 
+  sendApprovalRequest() {
+    return this.http.post<ApiResponse<any>>(API_URL.USER.RESEND_APPROVAL_REQUEST, {});
+  }
+
 }

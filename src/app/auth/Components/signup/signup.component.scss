@@ -36,6 +36,7 @@
       .gst-det-container {
         display: flex;
         align-items: start;
+        flex-wrap: wrap;
         gap: 1rem;
 
         .gstIN {
@@ -47,6 +48,16 @@
             right: .5rem;
             top: 2.2rem;
           }
+        }
+      }
+
+      .emailContainer {
+        position: relative;
+
+        .validateEmailBtn {
+          position: absolute;
+          top: 2.2rem;
+          right: 1rem;
         }
       }
 

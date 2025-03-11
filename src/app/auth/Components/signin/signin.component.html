@@ -46,7 +46,9 @@
       <!-- [disabled]="userEmail === '' || emailError !== '' || isRestricedDomain()" -->
 
     <div class="createAccount">
-      <p><span>Don't have an account?</span></p>
+      <p>
+        <span class="line"></span>
+        <span>Don't have an account?</span></p>
 
       <ui-button
         type="submit"
@@ -63,7 +65,7 @@
   <div class="formWrapper">
     <div>
       <p class="otp-det">OTP has been sent to</p>
-      <p class="email">{{ maskEmail(userEmail) }}</p>
+      <p class="email">{{ emailForm.value.email }}</p>
     </div>
 
     <div>

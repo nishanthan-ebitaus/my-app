@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { API_URL } from '@core/constants/apiurls';
 import { ApiResponse, ApiStatus } from '@core/models/api-response.model';
 import { BehaviorSubject, debounceTime, fromEvent, interval, merge, Observable, retry, switchMap, takeWhile, tap } from 'rxjs';
-import { GstDetailsMca, GstOtp, SigninRequest, SigninStep, Signup, SignupStep, VerifyGstOtp, VerifyOptRequest } from './auth.model';
+import { GstDetailsMca, GstOtp, IrpCredentials, SigninRequest, SigninStep, Signup, SignupStep, VerifyGstOtp, VerifyOptRequest } from './auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +34,6 @@ export class AuthService {
     this.zone.runOutsideAngular(() => {
       activityEvents$.subscribe(() => {
         const token = this.getAuthToken();
-        console.log('checking the token')
         if (token && this.isTokenExpiringSoon(token)) {
           this.zone.run(() => this.refreshToken().subscribe());
         }
@@ -115,7 +114,8 @@ export class AuthService {
   }
 
   gstValidator(): ValidatorFn {
-    const gstPattern = /^.{15}$/;
+    const gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}Z[A-Z0-9]{1}$/;
+    // 33ABCDE1234A1Z9
 
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
@@ -128,10 +128,23 @@ export class AuthService {
     };
   }
 
+  gstUsernameValidator(): ValidatorFn {
+    const usernamePattern = /^[a-zA-Z0-9_ ]+$/;
 
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const isValid = usernamePattern.test(control.value);
+      console.log('Username:', control.value, isValid);
+      return isValid ? null : { invalidGSTUsername: true };
+    };
+  }
 
   isTrueValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      console.log('isTrueValidator triggered', control.value);  // Log the value
       return control.value === true ? null : { mustBeTrue: true };
     };
   }
@@ -231,5 +244,9 @@ export class AuthService {
         }
       })
     );
+  }
+
+  saveIRPCredentials(data: IrpCredentials) {
+    return this.http.post<ApiResponse<any>>(API_URL.USER.IRP_CREDENTIALS, { data });
   }
 }

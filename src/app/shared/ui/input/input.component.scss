@@ -32,7 +32,7 @@
 
   &:focus, &:active {
     border-color: global.$primary-active;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 0px, global.$primayBlue 0px 0px 0px 1px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 0px, global.$primaryBlue 0px 0px 0px 1px;
   }
 
   &:disabled {

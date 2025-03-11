@@ -37,3 +37,8 @@ export interface VerifyGstOtp {
   gstIN: string,
   otp: string,
 }
+
+export interface IrpCredentials {
+  username: string,
+  password: string,
+}

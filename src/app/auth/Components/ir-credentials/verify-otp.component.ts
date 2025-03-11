@@ -27,11 +27,9 @@ export class VerifyOtpComponent implements OnInit, OnChanges {
   otpEntered(otp: string) {
     this.errorMessage = '';
     this.otpValue = otp;
-    console.log('on ca', this.errorMessage)
   }
 
   submitOtp() {
-    console.log('submit value', this.otpValue, this.otpValue.length)
     if (this.otpValue.length !== 6) {
       this.errorMessage = 'Invalid OTP';
       return;

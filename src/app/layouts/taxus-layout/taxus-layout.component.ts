@@ -3,17 +3,18 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, SimpleCh
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AlarmClock, Ban, Circle, Loader, LucideAngularModule, SquareUserRound, XCircle } from 'lucide-angular';
 import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 import { ModalComponent } from "../../shared/ui/modal/modal.component";
 import { TaxusHeaderComponent } from "./taxus-header/taxus-header.component";
 import { ApiResponse, ApiStatus } from '@src/app/core/models/api-response.model';
 import { TaxusLayoutService } from './taxus-layout.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ButtonComponent } from "../../shared/ui/button/button.component";
 
 @Component({
   selector: 'layout-taxus',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NgClass, NgFor, NgIf, AsyncPipe, TaxusHeaderComponent, ModalComponent, LucideAngularModule, MatProgressSpinnerModule],
+  imports: [RouterOutlet, RouterLink, NgClass, NgFor, NgIf, AsyncPipe, TaxusHeaderComponent, ModalComponent, LucideAngularModule, MatProgressSpinnerModule, ButtonComponent],
   templateUrl: './taxus-layout.component.html',
   styleUrl: './taxus-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +47,7 @@ export class TaxusLayoutComponent implements OnInit {
   }
   currentEntity = '';
   isLoading = true;
+  isSendingApproval = false;
   temp = true
 
   pageTitlesMap: Record<string, string> = {
@@ -90,7 +92,11 @@ export class TaxusLayoutComponent implements OnInit {
     { name: 'Help & Support', routerLink: '/help', icon: this.helpIcon },
   ];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef, private taxusService: TaxusLayoutService) { }
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private taxusService: TaxusLayoutService,
+  ) { }
 
   ngOnInit() {
     this.getEntityMap();
@@ -127,7 +133,9 @@ export class TaxusLayoutComponent implements OnInit {
   }
 
   getEntityMap() {
-    this.taxusService.entityMap().subscribe({
+    this.taxusService.entityMap().pipe(
+      finalize(() => this.isLoading = false)
+    ).subscribe({
       next: (res: ApiResponse<any>) => {
         const { status, data } = res;
         if (status === ApiStatus.SUCCESS) {
@@ -196,5 +204,23 @@ export class TaxusLayoutComponent implements OnInit {
       default:
         return Loader
     }
+  }
+
+  sendApprovalRequest() {
+    this.isSendingApproval = true;
+    this.taxusService.sendApprovalRequest().pipe(
+      finalize(() => {
+        this.isSendingApproval = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status } = response;
+        if (status === ApiStatus.SUCCESS) {
+          // this.getUserInfo();
+          console.log('Resend Email Sent successfully!')
+        }
+      }
+    })
   }
 }

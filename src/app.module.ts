@@ -14,6 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ApprovalComponent } from './app/components/approval/approval.component';
 import { ApiInterceptor } from './api.interceptor';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ApiInterceptor } from './api.interceptor';
     MatInputModule,
     MatCardModule,
     MatChipsModule,
+    MatProgressSpinnerModule,
     HttpClientModule,
   ],
   providers: [provideHttpClient(),

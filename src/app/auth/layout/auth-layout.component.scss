@@ -6,8 +6,8 @@ section {
   overflow: hidden;
 
   .left {
-    width: 50%;
-    border: 1px solid ;
+    width: 40%;
+    border-right: 2px solid global.$copper;
 
     img {
       width: 100%;
@@ -16,8 +16,7 @@ section {
   }
 
   .right {
-    width: 50%;
-    border: 1px solid ;
+    width: 60%;
     display: flex;
     flex-direction: column;
     position: relative;

@@ -19,5 +19,7 @@ export const API_URL = {
     USER_INFO: '/taxus/user/getRoleAndAccessInfo',
     ENTITY_MAP: '/auth/taxus/getEntityMap',
     CACHE_SUB_ENTITY: '/taxus/user/cacheRoleAccessForSubEntity',
+    RESEND_APPROVAL_REQUEST: '/taxus/user/sendApprovalRequest',
+    IRP_CREDENTIALS: '/taxus/user/SaveIRPCredentials',
   }
 };

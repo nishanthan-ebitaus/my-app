@@ -16,10 +16,11 @@
       (input)="onInputChange(i, $event)"
       (keydown)="handleBackspace(i, $event)"
       (focus)="otpInputs.toArray()[i].nativeElement.select()"
+      (paste)="onPaste($event, i)"
+      [attr.aria-label]="'OTP input ' + (i + 1)"
       v-bind="inputProps"
     />
   </div>
-
 
   <p *ngIf="isInvalid || errorMessage !== ''" class="error" id="error">
     {{ errorMessage }}

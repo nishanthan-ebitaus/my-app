@@ -43,6 +43,10 @@
       <label *ngIf="label" class="checkbox-label" [attr.for]="'input-' + processedLabel">
         {{ label }}
       </label>
+      <ng-content></ng-content>
     </div>
+    <p *ngIf="isInvalid || errorMessage !== ''" class="input-error" id="input-error">
+      {{ errorMessage }}
+    </p>
   </ng-template>
 </div>

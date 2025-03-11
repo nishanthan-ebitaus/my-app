@@ -22,7 +22,7 @@ button {
   }
 
   &:hover {
-    background-color: #2440b0;
+    background-color: #04519A  ;
   }
 
   &.loading {
@@ -40,7 +40,7 @@ button {
 }
 
 .btn-primary {
-  background-color: global.$primary-active;
+  background-color: global.$primaryBlue;
 }
 
 .btn-secondary {
@@ -58,7 +58,7 @@ button {
 .outlined {
   border: 1px solid global.$primary-active;
   background-color: global.$primary-light;
-  color: global.$primayBlue;
+  color: global.$primaryBlue;
 
   &:hover {
     background-color: global.$primary-light;

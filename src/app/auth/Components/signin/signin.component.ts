@@ -31,16 +31,9 @@ export class SigninComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.signinService.startResendTimer();
 
-    console.log('on signin comp')
-
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email, this.signinService.restrictedEmailDomainsValidator()]],
     })
-
-    this.signinService.resendTimer$.subscribe((timer) => {
-      this.resendTimer = timer;
-      console.log('this.resendTimer', this.resendTimer)
-    });
 
     this.signinService.signinStep$
       .pipe(takeUntil(this.destroy$))
@@ -97,7 +90,6 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   onOtpEntered(otp: string) {
-    console.log(otp);
     this.userOtp = otp;
   }
 
@@ -121,14 +113,12 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.signinService.signin({ username: this.emailForm.value.email }).pipe(
       finalize(() => {
-        console.log('on finalize');
         this.isLoading = false;
       })
     ).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status, message } = response;
         if (status === ApiStatus.SUCCESS) {
-          console.log("success");
           this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
           this.startTempTimer();
         } else if (status === ApiStatus.FAIL) {
@@ -144,7 +134,6 @@ export class SigninComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
-        console.log('on complete')
       }
     });
   }
@@ -155,11 +144,10 @@ export class SigninComponent implements OnInit, OnDestroy {
       console.log(this.tempTimer)
       if (this.tempTimer === 0) {
         this.startTempTimer();
-        this.signinService.signin({ username: this.userEmail }).subscribe({
+        this.signinService.signin({ username: this.emailForm.value.email }).subscribe({
           next: (response: ApiResponse<any>) => {
             const { status, message } = response;
             if (status === ApiStatus.SUCCESS) {
-              console.log("succeess");
               // this.signinService.setSigninStep(SigninStep.OTP_VERIFICATION);
             } else if (response.status === ApiStatus.FAIL) {
               if (message === 'User is not present') {
@@ -177,8 +165,6 @@ export class SigninComponent implements OnInit, OnDestroy {
             console.error('An error occurred. Please try again.', err);
           }
         });
-      } else {
-        console.log('re se rej')
       }
     // });
   }

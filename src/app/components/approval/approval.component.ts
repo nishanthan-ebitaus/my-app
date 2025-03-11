@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiStatus } from '@src/app/core/models/api-response.model';
 import { ApprovalService } from './approval.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-access-status',
@@ -16,11 +17,12 @@ export class ApprovalComponent implements OnInit {
   userEmail: string = '';
   approvalActionStatus: string | null = null;
   isDataError = false;
+  isLoading = false;
 
   constructor(
     private route: ActivatedRoute,
     private approvalService: ApprovalService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -34,12 +36,14 @@ export class ApprovalComponent implements OnInit {
   }
 
   approvalInfo() {
-    console.log('on inside 1', this.token)
     if (this.token) {
-      this.approvalService.approvalInfo(this.token).subscribe({
+      this.isLoading = true;
+      this.approvalService.approvalInfo(this.token).pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      ).subscribe({
         next: (response) => {
-          console.log('on inside')
-
           const { status, message, data } = response;
           if (status === ApiStatus.SUCCESS) {
             const { gstNumber, email } = data;
@@ -52,7 +56,7 @@ export class ApprovalComponent implements OnInit {
               this.approvalActionStatus = 'denied';
             }
           } else if (status === ApiStatus.ERROR) {
-              this.isDataError = true;
+            this.isDataError = true;
           }
         },
         error: (error) => {

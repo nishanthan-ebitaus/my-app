@@ -5,67 +5,67 @@
 
   <mat-card class="card border-primary shadow-lg p-4">
     <mat-card-header class="header">
-      <img
-        class="img-fluid"
-        src="./assets/images/taxusEbitaus.webp"
-        alt=""
-      />
+      <img class="img-fluid" src="./assets/images/taxusEbitaus.webp" alt="" />
     </mat-card-header>
 
     <mat-card-content class="content">
-      <ng-container *ngIf="isDataError">
-        <p>
-          Request token got expired
-        </p>
+      <ng-container *ngIf="isLoading">
+        <mat-spinner diameter="40" class="loader" color="black"></mat-spinner>
       </ng-container>
 
-      <ng-container *ngIf="!isDataError">
-        <p>
-          We got an request to create an account from your company's GSTIN
-          <span>{{ gstIN }}</span>
-        </p>
+      <ng-container *ngIf="!isLoading">
+        <ng-container *ngIf="isDataError">
+          <p>Request token got expired</p>
+        </ng-container>
 
-        <div class="userContent">
-          <label class="form-label fw-semibold">
-            Email Address associated with Account Creation
-          </label>
-
-          <div class="d-flex align-items-center border rounded px-2">
-            <mat-icon class="text-secondary">email</mat-icon>
-            <input
-              disabled
-              matInput
-              class="form-control border-0 ms-2"
-              [value]="userEmail"
-            />
-          </div>
-        </div>
-
-        <div *ngIf="approvalActionStatus === null" class="actions">
-          <button
-            (click)="updateApprovalInfo('deny')"
-            mat-flat-button
-            class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded"
-          >
-            <mat-icon>close</mat-icon> Deny
-          </button>
-
-          <button
-            (click)="updateApprovalInfo('approve')"
-            mat-flat-button
-            class="btn btn-primary text-white d-flex align-items-center px-4 rounded"
-          >
-            <mat-icon>send</mat-icon> Approve
-          </button>
-        </div>
-
-        <div *ngIf="approvalActionStatus !== null">
+        <ng-container *ngIf="!isDataError">
           <p>
-            Thank you! The user has been
-            <span class="fw-semibold">{{ approvalActionStatus }}</span>
-            successfully
+            We got an request to create an account from your company's GSTIN
+            <span>{{ gstIN }}</span>
           </p>
-        </div>
+
+          <div class="userContent">
+            <label class="form-label fw-semibold">
+              Email Address associated with Account Creation
+            </label>
+
+            <div class="d-flex align-items-center border rounded px-2">
+              <mat-icon class="text-secondary">email</mat-icon>
+              <input
+                disabled
+                matInput
+                class="form-control border-0 ms-2"
+                [value]="userEmail"
+              />
+            </div>
+          </div>
+
+          <div *ngIf="approvalActionStatus === null" class="actions">
+            <button
+              (click)="updateApprovalInfo('deny')"
+              mat-flat-button
+              class="denyBtn text-danger d-flex align-items-center px-4 border-0 rounded"
+            >
+              <mat-icon>close</mat-icon> Deny
+            </button>
+
+            <button
+              (click)="updateApprovalInfo('approve')"
+              mat-flat-button
+              class="btn btn-primary text-white d-flex align-items-center px-4 rounded"
+            >
+              <mat-icon>done_all</mat-icon> Approve
+            </button>
+          </div>
+
+          <div *ngIf="approvalActionStatus !== null">
+            <p>
+              Thank you! The user has been
+              <span class="fw-semibold">{{ approvalActionStatus }}</span>
+              successfully
+            </p>
+          </div>
+        </ng-container>
       </ng-container>
     </mat-card-content>
 

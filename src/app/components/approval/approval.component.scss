@@ -31,7 +31,9 @@ section {
       border-radius: 1rem;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       gap: 1rem;
+      min-height: 200px;
 
       p {
         color: global.$primaryText;
@@ -40,6 +42,11 @@ section {
           color: global.$font-color;
           font-weight: 500;
         }
+      }
+
+      .loader {
+        align-self: center;
+        justify-content: center;
       }
 
       .userContent {

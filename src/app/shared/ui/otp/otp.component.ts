@@ -93,6 +93,27 @@ export class UiOtpComponent implements OnInit, OnChanges {
     }
   }
 
+  onPaste(event: ClipboardEvent, index: number): void {
+    // Prevent the default paste behavior
+    event.preventDefault();
+
+    // Get the pasted text from clipboard
+    const pastedValue = event.clipboardData?.getData('text') || '';
+
+    // Filter out any non-numeric values if onlyNumeric is enabled
+    const valueToPaste = this.onlyNumeric ? pastedValue.replace(/\D/g, '') : pastedValue;
+
+    // Distribute the pasted value across the OTP inputs
+    valueToPaste.split('').forEach((char, i) => {
+      if (i < this.length) {
+        this.otpValues[i].setValue(char);
+      }
+    });
+
+    // Emit OTP value after pasting
+    this.emitOtp();
+  }
+
   private emitOtp(): void {
     const otpValue = this.otpValues.map(control => control.value).join('');
     this.otpEntered.emit(otpValue);
