@@ -26,10 +26,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     AppRoutingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
-      positionClass: 'toast-top-right', // Position of the toast
-      timeOut: 300000,  // Duration the toast is visible (in ms)
-      closeButton: true, // Show close button
-      preventDuplicates: true, // Prevent duplicate toasts
+      positionClass: 'toast-top-right',
+      timeOut: 300000,
+      closeButton: true,
+      preventDuplicates: true,
     }),
 
     MatButtonModule,
