@@ -49,15 +49,21 @@ section {
         justify-content: center;
       }
 
-      .userContent {
+      .userDetContainer {
         display: flex;
         flex-direction: column;
-        gap: .5rem;
+        gap: 1rem;
 
-        input {
-          padding: .5rem;
+        .userContent {
+          display: flex;
+          flex-direction: column;
+          gap: .5rem;
+
+          input {
+            padding: .5rem;
+          }
+
         }
-
       }
 
       .actions {

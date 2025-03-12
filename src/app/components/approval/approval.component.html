@@ -24,18 +24,31 @@
             <span>{{ gstIN }}</span>
           </p>
 
-          <div class="userContent">
-            <label class="form-label fw-semibold">
-              Email Address associated with Account Creation
-            </label>
+          <div class="userDetContainer">
+            <div class="userContent" *ngIf="userName !== ''">
+              <label class="form-label fw-semibold"> Name </label>
 
-            <div class="d-flex align-items-center border rounded px-2">
-              <mat-icon class="text-secondary">email</mat-icon>
-              <input
-                matInput
-                class="form-control border-0 ms-2"
-                [value]="userEmail"
-              />
+              <div class="d-flex align-items-center border rounded px-2">
+                <mat-icon class="text-secondary">account_circle</mat-icon>
+                <input
+                  matInput
+                  class="form-control border-0 ms-2"
+                  [value]="userName"
+                />
+              </div>
+            </div>
+
+            <div class="userContent" *ngIf="userEmail !== ''">
+              <label class="form-label fw-semibold"> E-Mail Address </label>
+
+              <div class="d-flex align-items-center border rounded px-2">
+                <mat-icon class="text-secondary">email</mat-icon>
+                <input
+                  matInput
+                  class="form-control border-0 ms-2"
+                  [value]="userEmail"
+                />
+              </div>
             </div>
           </div>
 

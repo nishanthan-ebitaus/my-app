@@ -15,6 +15,7 @@ export class ApprovalComponent implements OnInit {
   currentUrl: string = '';
   gstIN: string = '';
   userEmail: string = '';
+  userName: string = '';
   approvalActionStatus: string | null = null;
   isDataError = false;
   isLoading = false;
@@ -46,10 +47,11 @@ export class ApprovalComponent implements OnInit {
         next: (response) => {
           const { status, message, data } = response;
           if (status === ApiStatus.SUCCESS) {
-            const { gstNumber, email } = data;
+            const { gstNumber, email, username } = data;
 
             this.gstIN = gstNumber;
             this.userEmail = email;
+            this.userName = username;
             if (message === 'Already Approved') {
               this.approvalActionStatus = 'approved';
             } else if (message === 'Already Rejected') {
