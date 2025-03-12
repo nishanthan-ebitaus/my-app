@@ -113,6 +113,16 @@ export class SignupComponent implements OnInit {
     this.emailForm.get('gstOtp')?.valueChanges.subscribe(() => {
       this.gstOtpError = '';
     });
+
+    this.emailForm.get('name')?.valueChanges.subscribe(value => {
+      const titleCasedValue = value
+        .split(' ')
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+
+      this.emailForm.get('name')?.setValue(titleCasedValue, { emitEvent: false });
+    });
+
   }
 
   updateSignupStep(step: string) {

@@ -62,11 +62,13 @@
             </div>
 
             <div class="status-content">
-              <p class="heading">Account Pending Approval</p>
+              <p class="heading">Account Approval Status</p>
 
               <p class="desc">
                 Thank you for signing up to TAXUS, Your Account Activation is
-                pending approval from your Corporate Admin
+                {{
+                    statusInfo.status
+                }} from your Corporate Admin
                 {{ statusInfo.adminMail }}
               </p>
 
