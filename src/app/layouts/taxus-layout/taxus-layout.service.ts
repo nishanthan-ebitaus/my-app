@@ -26,6 +26,8 @@ export class TaxusLayoutService {
   }
 
   sendApprovalRequest() {
+    console.log('sendddddd the request');
+
     return this.http.post<ApiResponse<any>>(API_URL.USER.RESEND_APPROVAL_REQUEST, {});
   }
 

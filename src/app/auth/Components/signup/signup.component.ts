@@ -492,8 +492,6 @@ export class SignupComponent implements OnInit {
         const { status, message, data } = response;
         if (status === ApiStatus.SUCCESS) {
           const { authToken, refreshToken, entityId } = data;
-          // const authToken = 'auth';
-          // const refreshToken = 'refresh'
           this.authService.setAuthToken(authToken);
           this.authService.setRefreshToken(refreshToken);
 
@@ -517,11 +515,25 @@ export class SignupComponent implements OnInit {
     });
   }
 
+  sendApprovalRequest() {
+    this.taxusService.sendApprovalRequest().subscribe({
+      next: (response: ApiResponse<any>) => {
+        const { status } = response;
+        if(status === ApiStatus.SUCCESS) {
+          console.log('Approval Request Sent');
+        } else {
+          console.log('An error occurred whilw sending approval request');
+        }
+      }
+    })
+  }
+
   cacheSubEntity(entityId: string) {
     this.taxusService.cacheSubEntity({ entityId }).subscribe({
       next: (response: ApiResponse<any>) => {
         const { status } = response;
         if (status === ApiStatus.SUCCESS) {
+          this.sendApprovalRequest();
           this.isSignupSuccess = 'irp';
         }
       }
