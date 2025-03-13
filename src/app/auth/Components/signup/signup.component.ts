@@ -44,6 +44,7 @@ export class SignupComponent implements OnInit {
   tickIcon = Check;
   tempTimer = 30;
   tempTimerSub: any;
+  emailLabel = 'Corporate E-Mail';
 
   constructor(
     private authService: AuthService,
@@ -71,9 +72,18 @@ export class SignupComponent implements OnInit {
       isAgree: [false, this.authService.isTrueValidator],
     });
 
+    this.emailForm.get('email')?.valueChanges.subscribe((value:string) => {
+      this.emailForm.get('email')?.setValue(value.toLowerCase());
+    })
+
     // Update validators dynamically when accountType changes
     this.emailForm.get('accountType')?.valueChanges.subscribe((selectedValue) => {
       this.isSubmitted = false;
+      if (selectedValue === '2') {
+        this.emailLabel = 'Corporate E-Mail'
+      } else {
+        this.emailLabel = 'E-Mail'
+      }
       this.updateConditionalValidators(selectedValue);
     });
 

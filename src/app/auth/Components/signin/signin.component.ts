@@ -49,6 +49,10 @@ export class SigninComponent implements OnInit, OnDestroy {
           this.signinService.clearResendInterval();
         }
       });
+
+    this.emailForm.get('email')?.valueChanges.subscribe((value:string) => {
+      this.emailForm.get('email')?.setValue(value.toLowerCase());
+    })
   }
 
   getErrorMessage(field: string): string {
@@ -213,6 +217,7 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.signinService.setSigninStep(SigninStep.EMAIL_VERIFICATION);
     this.userEmail = '';
     this.emailError = '';
+    this.otpError = '';
   }
 
   ngOnDestroy() {
