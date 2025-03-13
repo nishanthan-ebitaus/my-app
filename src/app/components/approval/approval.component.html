@@ -28,26 +28,18 @@
             <div class="userContent" *ngIf="userName !== ''">
               <label class="form-label fw-semibold"> Name </label>
 
-              <div class="d-flex align-items-center border rounded px-2">
+              <div class="d-flex align-items-center border rounded p-2">
                 <mat-icon class="text-secondary">account_circle</mat-icon>
-                <input
-                  matInput
-                  class="form-control border-0 ms-2"
-                  [value]="userName"
-                />
+                <span class="ml-2">{{userName}}</span>
               </div>
             </div>
 
             <div class="userContent" *ngIf="userEmail !== ''">
               <label class="form-label fw-semibold"> E-Mail Address </label>
 
-              <div class="d-flex align-items-center border rounded px-2">
+              <div class="d-flex align-items-center border rounded p-2">
                 <mat-icon class="text-secondary">email</mat-icon>
-                <input
-                  matInput
-                  class="form-control border-0 ms-2"
-                  [value]="userEmail"
-                />
+                <span class="ml-2">{{userEmail}}</span>
               </div>
             </div>
           </div>
@@ -73,7 +65,7 @@
           <div *ngIf="approvalActionStatus !== null">
             <p>
               Thank you! The user has been
-              <span class="fw-semibold">{{ approvalActionStatus }}</span>
+              <span class="fw-semibold"  [ngClass]="approvalActionStatus">{{ approvalActionStatus }}</span>
               successfully
             </p>
           </div>

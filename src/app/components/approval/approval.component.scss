@@ -77,6 +77,14 @@ section {
           border: 1px solid #f8d7da !important;
         }
       }
+
+      .approved {
+        color: green !important;
+      }
+
+      .denied {
+        color: red !important;
+      }
     }
   }
 }

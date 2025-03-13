@@ -116,8 +116,10 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   handleSignin() {
+    const username = this.emailForm.value.email.toLowerCase();
+
     this.isLoading = true;
-    this.signinService.signin({ username: this.emailForm.value.email }).pipe(
+    this.signinService.signin({ username }).pipe(
       finalize(() => {
         this.isLoading = false;
       })

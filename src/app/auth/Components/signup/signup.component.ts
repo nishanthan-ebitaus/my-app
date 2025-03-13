@@ -253,7 +253,7 @@ export class SignupComponent implements OnInit {
   }
 
   validateUserEmail() {
-    const email = this.emailForm.value.email;
+    const email = this.emailForm.get('email')?.value?.toLowerCase();
 
     this.authService.validateUserEmail({ email }).subscribe({
       next: (response: ApiResponse<any>) => {
